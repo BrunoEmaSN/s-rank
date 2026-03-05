@@ -5,6 +5,8 @@ import { SignOutButton } from "./SignOutButton";
 type SessionData = { user?: { name?: string; email?: string }; session?: unknown } | null;
 
 export function Header({ session }: { session: SessionData }) {
+  const user = session?.user;
+
   return (
     <header className="sticky top-0 z-50 border-b border-secondary/50 bg-primary px-4 py-4 md:px-8">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
@@ -14,22 +16,29 @@ export function Header({ session }: { session: SessionData }) {
             S-Rank
           </span>
         </Link>
-        <nav className="flex items-center gap-3">
-          <Link href="/explore" className="text-sm text-foreground-muted hover:text-foreground">
-            Explorar
-          </Link>
-          {session?.user ? (
+        <nav className="flex items-center gap-4">
+          {user ? (
             <>
-              <Link
-                href="/dashboard"
-                className="rounded-lg border border-accent bg-transparent px-4 py-2 text-sm font-medium text-accent transition hover:bg-accent hover:text-accent-foreground"
-              >
+              <Link href="/dashboard" className="text-sm text-foreground-muted hover:text-foreground">
                 Dashboard
               </Link>
+              <Link href="/profile" className="text-sm text-foreground-muted hover:text-foreground">
+                Perfil
+              </Link>
+              <Link href="/explore" className="text-sm text-foreground-muted hover:text-foreground">
+                Explorar
+              </Link>
+              <Link href="/settings" className="text-sm text-foreground-muted hover:text-foreground">
+                Ajustes
+              </Link>
+              <span className="text-sm text-foreground-muted">{user.name ?? user.email}</span>
               <SignOutButton />
             </>
           ) : (
             <>
+              <Link href="/explore" className="text-sm text-foreground-muted hover:text-foreground">
+                Explorar
+              </Link>
               <Link href="/sign-in" className="text-sm text-foreground-muted hover:text-foreground">
                 Iniciar sesión
               </Link>

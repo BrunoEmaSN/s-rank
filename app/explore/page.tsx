@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { getSession } from "@/lib/auth-server";
+import { Header } from "@/components/Header";
 import { TrophyIcon } from "../../components/icons";
 
 // Mock list of channels for now
@@ -8,30 +9,12 @@ const mockChannels = [
   { id: "3", name: "Canal Ejemplo 3", platform: "Twitch", trophies: 15 },
 ];
 
-export default function ExplorePage() {
+export default async function ExplorePage() {
+  const session = await getSession();
+
   return (
     <div className="min-h-screen bg-primary text-foreground">
-      <header className="border-b border-secondary/50 px-4 py-4 md:px-8">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-foreground no-underline">
-            <TrophyIcon className="h-8 w-8 text-accent" aria-hidden />
-            <span className="text-xl font-bold" style={{ fontFamily: "var(--font-quantico)" }}>
-              S-Rank
-            </span>
-          </Link>
-          <div className="flex gap-4">
-            <Link href="/sign-in" className="text-sm text-foreground-muted hover:text-foreground">
-              Iniciar sesión
-            </Link>
-            <Link
-              href="/sign-up"
-              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground no-underline transition hover:opacity-90"
-            >
-              Registrarse
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header session={session ? { user: session.user } : null} />
       <main className="mx-auto max-w-6xl px-4 py-12 md:px-8">
         <h1
           className="mb-2 text-2xl font-bold text-foreground"
