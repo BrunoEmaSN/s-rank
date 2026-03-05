@@ -1,10 +1,14 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { db } from "./db";
 import * as schema from "@/db/schema";
 
+const baseURL = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+
 export const auth = betterAuth({
+  baseURL,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
@@ -17,10 +21,51 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [nextCookies()],
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+    twitch: {
+      clientId: process.env.TWITCH_CLIENT_ID!,
+      clientSecret: process.env.TWITCH_CLIENT_SECRET!,
+    },
+  },
+  plugins: [
+    nextCookies(),
+    genericOAuth({
+      config: [
+        {
+          providerId: "kick",
+          clientId: process.env.KICK_CLIENT_ID!,
+          clientSecret: process.env.KICK_CLIENT_SECRET!,
+          authorizationUrl: "https://id.kick.com/oauth/authorize",
+          tokenUrl: "https://id.kick.com/oauth/token",
+          scopes: ["user:read"],
+          pkce: true,
+          getUserInfo: async (tokens) => {
+            const res = await fetch("https://api.kick.com/public/v1/users", {
+              headers: { Authorization: `Bearer ${tokens.accessToken}` },
+            });
+            if (!res.ok) return null;
+            const data = await res.json();
+            const user = Array.isArray(data) ? data[0] : data;
+            if (!user?.id) return null;
+            return {
+              id: String(user.id),
+              name: user.username ?? user.name ?? user.slug ?? "Kick User",
+              email: user.email ?? `${user.id}@kick.placeholder`,
+              image: user.profile_pic ?? user.avatar ?? undefined,
+              emailVerified: Boolean(user.email),
+            };
+          },
+        },
+      ],
+    }),
+  ],
   secret: process.env.BETTER_AUTH_SECRET!,
   basePath: "/api/auth",
-  trustedOrigins: [process.env.BETTER_AUTH_URL ?? "http://localhost:3000"],
+  trustedOrigins: [baseURL],
   user: {
     additionalFields: {
       role: {

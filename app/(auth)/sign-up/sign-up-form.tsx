@@ -4,6 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import {
+  Input,
+  Label,
+  LabelText,
+  Button,
+  Select,
+  Alert,
+  Separator,
+} from "@/app/components/ui";
 
 type Role = "streamer" | "sub";
 
@@ -16,6 +25,37 @@ export function SignUpForm() {
   const [role, setRole] = useState<Role>("sub");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [ssoLoading, setSsoLoading] = useState<"google" | "twitch" | "kick" | null>(null);
+
+  async function handleSocialSignIn(provider: "google" | "twitch") {
+    setError(null);
+    setSsoLoading(provider);
+    const { data, error: err } = await authClient.signIn.social({
+      provider,
+      callbackURL: "/dashboard",
+    });
+    setSsoLoading(null);
+    if (err) {
+      setError(err.message ?? `Error al registrarse con ${provider}`);
+      return;
+    }
+    if (data?.url) window.location.href = data.url;
+  }
+
+  async function handleKickSignIn() {
+    setError(null);
+    setSsoLoading("kick");
+    const { data, error: err } = await authClient.signIn.oauth2({
+      providerId: "kick",
+      callbackURL: "/dashboard",
+    });
+    setSsoLoading(null);
+    if (err) {
+      setError(err.message ?? "Error al registrarse con Kick");
+      return;
+    }
+    if (data?.url) window.location.href = data.url;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,74 +95,93 @@ export function SignUpForm() {
         Únete a S-Rank y empieza a recompensar a tu comunidad
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {error && (
-          <div className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-400">
-            {error}
-          </div>
-        )}
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-foreground">Nombre</span>
-          <input
+        {error && <Alert variant="error">{error}</Alert>}
+        <Label>
+          <LabelText>Nombre</LabelText>
+          <Input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="rounded-lg border border-secondary bg-secondary/50 px-4 py-2 text-foreground placeholder:text-foreground-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="Tu nombre"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-foreground">Email</span>
-          <input
+        </Label>
+        <Label>
+          <LabelText>Email</LabelText>
+          <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="rounded-lg border border-secondary bg-secondary/50 px-4 py-2 text-foreground placeholder:text-foreground-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="tu@email.com"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-foreground">Contraseña</span>
-          <input
+        </Label>
+        <Label>
+          <LabelText>Contraseña</LabelText>
+          <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
-            className="rounded-lg border border-secondary bg-secondary/50 px-4 py-2 text-foreground placeholder:text-foreground-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="Mínimo 8 caracteres"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-foreground">Confirmar contraseña</span>
-          <input
+        </Label>
+        <Label>
+          <LabelText>Confirmar contraseña</LabelText>
+          <Input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="rounded-lg border border-secondary bg-secondary/50 px-4 py-2 text-foreground placeholder:text-foreground-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="Repite la contraseña"
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-foreground">¿Qué eres?</span>
-          <select
+        </Label>
+        <Label>
+          <LabelText>¿Qué eres?</LabelText>
+          <Select
             value={role}
             onChange={(e) => setRole(e.target.value as Role)}
-            className="rounded-lg border border-secondary bg-secondary/50 px-4 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           >
             <option value="sub">Suscriptor / Viewer</option>
             <option value="streamer">Streamer</option>
-          </select>
-        </label>
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-2 rounded-lg bg-accent px-4 py-3 font-semibold text-accent-foreground transition hover:opacity-90 disabled:opacity-50"
-        >
+          </Select>
+        </Label>
+        <Button type="submit" disabled={loading} size="lg" className="mt-2">
           {loading ? "Creando cuenta…" : "Crear cuenta"}
-        </button>
+        </Button>
+
+        <Separator>o regístrate con</Separator>
+
+        <div className="flex flex-col gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={loading || ssoLoading !== null}
+            onClick={() => handleSocialSignIn("google")}
+          >
+            {ssoLoading === "google" ? "Conectando…" : "Google"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={loading || ssoLoading !== null}
+            onClick={() => handleSocialSignIn("twitch")}
+          >
+            {ssoLoading === "twitch" ? "Conectando…" : "Twitch"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={loading || ssoLoading !== null}
+            onClick={handleKickSignIn}
+          >
+            {ssoLoading === "kick" ? "Conectando…" : "Kick"}
+          </Button>
+        </div>
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
         ¿Ya tienes cuenta?{" "}
