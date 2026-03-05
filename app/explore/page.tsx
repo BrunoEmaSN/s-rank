@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrophyIcon } from "../components/icons";
+import { TrophyIcon } from "../../components/icons";
 
 // Mock list of channels for now
 const mockChannels = [

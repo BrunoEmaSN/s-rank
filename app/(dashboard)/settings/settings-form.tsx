@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Input, Label, LabelText, Button, Alert } from "@/app/components/ui";
+import { Input, Label, LabelText, Button, Alert } from "@/components/ui";
 
 type Role = "streamer" | "sub";
 

@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useSignUp } from "@/hooks/use-auth-form";
 import {
   Input,
   Label,
@@ -12,79 +11,24 @@ import {
   Select,
   Alert,
   Separator,
-} from "@/app/components/ui";
+} from "@/components/ui";
 import { SiGoogle, SiKick, SiTwitch } from "react-icons/si";
 
 type Role = "streamer" | "sub";
 
 export function SignUpForm() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<Role>("sub");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [ssoLoading, setSsoLoading] = useState<"google" | "twitch" | "kick" | null>(null);
-
-  async function handleSocialSignIn(provider: "google" | "twitch") {
-    setError(null);
-    setSsoLoading(provider);
-    const { data, error: err } = await authClient.signIn.social({
-      provider,
-      callbackURL: "/dashboard",
-      additionalData: { role },
-    });
-    setSsoLoading(null);
-    if (err) {
-      setError(err.message ?? `Error al registrarse con ${provider}`);
-      return;
-    }
-    if (data?.url) window.location.href = data.url;
-  }
-
-  async function handleKickSignIn() {
-    setError(null);
-    setSsoLoading("kick");
-    const { data, error: err } = await authClient.signIn.oauth2({
-      providerId: "kick",
-      callbackURL: "/dashboard",
-      additionalData: { role },
-    });
-    setSsoLoading(null);
-    if (err) {
-      setError(err.message ?? "Error al registrarse con Kick");
-      return;
-    }
-    if (data?.url) window.location.href = data.url;
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      return;
-    }
-    if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres");
-      return;
-    }
-    setLoading(true);
-    const { data, error: err } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-      role,
-    } as Parameters<typeof authClient.signUp.email>[0]);
-    setLoading(false);
-    if (err) {
-      setError(err.message ?? "Error al registrarse");
-      return;
-    }
-    if (data) router.push("/dashboard");
-  }
+  const {
+    error,
+    loading,
+    ssoLoading,
+    handleSubmit,
+    handleSocialSignIn,
+  } = useSignUp();
 
   const ssoDisabled = loading || ssoLoading !== null;
   const loadingSpinner = (
@@ -105,7 +49,12 @@ export function SignUpForm() {
       <p className="mb-6 text-center text-foreground-muted">
         Únete a S-Rank y empieza a recompensar a tu comunidad
       </p>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form
+        onSubmit={(e) =>
+          handleSubmit({ e, name, email, password, confirmPassword, role })
+        }
+        className="flex flex-col gap-4"
+      >
         {error && <Alert variant="error">{error}</Alert>}
         <div className="flex gap-4 justify-center">
           <Button
@@ -113,7 +62,7 @@ export function SignUpForm() {
             variant="outline"
             size="lg"
             disabled={ssoDisabled}
-            onClick={() => handleSocialSignIn("google")}
+            onClick={() => handleSocialSignIn("google", role)}
           >
             {ssoLoading === "google" ? loadingSpinner : <SiGoogle className="h-5 w-5" />}
           </Button>
@@ -122,7 +71,7 @@ export function SignUpForm() {
             variant="outline"
             size="lg"
             disabled={ssoDisabled}
-            onClick={() => handleSocialSignIn("twitch")}
+            onClick={() => handleSocialSignIn("twitch", role)}
           >
             {ssoLoading === "twitch" ? loadingSpinner : <SiTwitch className="h-5 w-5" />}
           </Button>
@@ -131,7 +80,7 @@ export function SignUpForm() {
             variant="outline"
             size="lg"
             disabled={ssoDisabled}
-            onClick={handleKickSignIn}
+            onClick={() => handleSocialSignIn("kick", role)}
           >
             {ssoLoading === "kick" ? loadingSpinner : <SiKick className="h-5 w-5" />}
           </Button>

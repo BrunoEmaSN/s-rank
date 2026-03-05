@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Button, Label, LabelText, Select, Alert } from "@/app/components/ui";
+import { Button, Label, LabelText, Select, Alert } from "@/components/ui";
 
 type Role = "streamer" | "sub";
 

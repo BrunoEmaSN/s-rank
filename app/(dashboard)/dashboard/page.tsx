@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth-server";
-import { TrophyIcon, ChartIcon, PeopleIcon } from "@/app/components/icons";
+import { TrophyIcon, ChartIcon, PeopleIcon } from "@/components/icons";
 
 export default async function DashboardPage() {
   const session = await getSession();

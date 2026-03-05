@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth-server";
-import { TrophyIcon } from "@/app/components/icons";
+import { TrophyIcon } from "@/components/icons";
 
 export default async function ProfilePage() {
   const session = await getSession();

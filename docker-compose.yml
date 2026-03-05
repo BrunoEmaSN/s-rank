@@ -1,35 +1,49 @@
+# docker-compose.yml
 services:
   postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
+    image: postgres:16
+    container_name: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
+    networks:
+      - srank-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
-      interval: 2s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 5s
+      retries: 5
 
-  app:
+  nextjs:
     build: .
-    restart: unless-stopped
+    container_name: nextjs-app
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: "${DATABASE_URL}"
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
+      KICK_CLIENT_ID: ${KICK_CLIENT_ID}
+      KICK_CLIENT_SECRET: ${KICK_CLIENT_SECRET}
+    networks:
+      - srank-network
     depends_on:
       postgres:
         condition: service_healthy
+
+networks:
+  srank-network:
+    driver: bridge
 
 volumes:
   postgres_data:

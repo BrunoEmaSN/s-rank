@@ -24,6 +24,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  account:{
+    accountLinking:{
+      enabled: true,
+      trustedProviders: ["google", "twitch", "kick"],
+    }
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -32,6 +38,10 @@ export const auth = betterAuth({
     twitch: {
       clientId: process.env.TWITCH_CLIENT_ID!,
       clientSecret: process.env.TWITCH_CLIENT_SECRET!,
+    },
+    kick: {
+      clientId: process.env.KICK_CLIENT_ID!,
+      clientSecret: process.env.KICK_CLIENT_SECRET!,
     },
   },
   plugins: [
@@ -50,35 +60,6 @@ export const auth = betterAuth({
         },
         session,
       };
-    }),
-    genericOAuth({
-      config: [
-        {
-          providerId: "kick",
-          clientId: process.env.KICK_CLIENT_ID!,
-          clientSecret: process.env.KICK_CLIENT_SECRET!,
-          authorizationUrl: "https://id.kick.com/oauth/authorize",
-          tokenUrl: "https://id.kick.com/oauth/token",
-          scopes: ["user:read"],
-          pkce: true,
-          getUserInfo: async (tokens) => {
-            const res = await fetch("https://api.kick.com/public/v1/users", {
-              headers: { Authorization: `Bearer ${tokens.accessToken}` },
-            });
-            if (!res.ok) return null;
-            const data = await res.json();
-            const user = Array.isArray(data) ? data[0] : data;
-            if (!user?.id) return null;
-            return {
-              id: String(user.id),
-              name: user.username ?? user.name ?? user.slug ?? "Kick User",
-              email: user.email ?? `${user.id}@kick.placeholder`,
-              image: user.profile_pic ?? user.avatar ?? undefined,
-              emailVerified: Boolean(user.email),
-            };
-          },
-        },
-      ],
     }),
   ],
   secret: process.env.BETTER_AUTH_SECRET!,
@@ -131,4 +112,14 @@ export const auth = betterAuth({
       },
     },
   },
+  advanced: {
+    cookies: {
+      state: {
+        attributes: {
+          sameSite: "none",
+          secure: true,
+        }
+      }
+    }
+  }
 });

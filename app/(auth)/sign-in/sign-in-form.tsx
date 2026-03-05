@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useSignIn } from "@/hooks/use-auth-form";
 import {
   Input,
   Label,
@@ -12,64 +11,20 @@ import {
   Checkbox,
   Alert,
   Separator,
-} from "@/app/components/ui";
+} from "@/components/ui";
 import { SiGoogle, SiKick, SiTwitch } from "react-icons/si";
 
 export function SignInForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [ssoLoading, setSsoLoading] = useState<"google" | "twitch" | "kick" | null>(null);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    const { data, error: err } = await authClient.signIn.email({
-      email,
-      password,
-      rememberMe,
-    });
-    setLoading(false);
-    if (err) {
-      setError(err.message ?? "Error al iniciar sesión");
-      return;
-    }
-    if (data) router.push("/dashboard");
-  }
-
-  async function handleSocialSignIn(provider: "google" | "twitch") {
-    setError(null);
-    setSsoLoading(provider);
-    const { data, error: err } = await authClient.signIn.social({
-      provider,
-      callbackURL: "/dashboard",
-    });
-    setSsoLoading(null);
-    if (err) {
-      setError(err.message ?? `Error al iniciar sesión con ${provider}`);
-      return;
-    }
-    if (data?.url) window.location.href = data.url;
-  }
-
-  async function handleKickSignIn() {
-    setError(null);
-    setSsoLoading("kick");
-    const { data, error: err } = await authClient.signIn.oauth2({
-      providerId: "kick",
-      callbackURL: "/dashboard",
-    });
-    setSsoLoading(null);
-    if (err) {
-      setError(err.message ?? "Error al iniciar sesión con Kick");
-      return;
-    }
-    if (data?.url) window.location.href = data.url;
-  }
+  const {
+    error,
+    loading,
+    ssoLoading,
+    handleSubmit,
+    handleSocialSignIn,
+  } = useSignIn();
 
   const ssoDisabled = loading || ssoLoading !== null;
 
@@ -91,7 +46,12 @@ export function SignInForm() {
       <p className="mb-6 text-center text-foreground-muted">
         Accede a tu cuenta de S-Rank
       </p>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form
+        onSubmit={(e) =>
+          handleSubmit({ e, email, password, rememberMe })
+        }
+        className="flex flex-col gap-4"
+      >
         {error && <Alert variant="error">{error}</Alert>}
         <div className="flex gap-4 justify-center">
           <Button
@@ -125,7 +85,7 @@ export function SignInForm() {
             variant="outline"
             size="lg"
             disabled={ssoDisabled}
-            onClick={handleKickSignIn}
+            onClick={() => handleSocialSignIn("kick")}
           >
             {ssoLoading === "kick" ? (
               loadingSpinner

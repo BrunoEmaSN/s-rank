@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-server";
-import { TrophyIcon } from "../components/icons";
+import { TrophyIcon } from "../../components/icons";
 import { RedirectIfNeedsRole } from "./RedirectIfNeedsRole";
 
 export default async function DashboardLayout({

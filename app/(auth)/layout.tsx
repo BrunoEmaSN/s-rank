@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrophyIcon } from "../components/icons";
+import { TrophyIcon } from "../../components/icons";
 
 export default function AuthLayout({
   children,
