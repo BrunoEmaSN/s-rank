@@ -3,7 +3,13 @@ import { TrophyIcon } from "@/app/components/icons";
 
 export default async function ProfilePage() {
   const session = await getSession();
-  const user = session?.user as { name?: string; email?: string; image?: string; role?: string } | undefined;
+  const user = session?.user as {
+    name?: string;
+    email?: string;
+    image?: string;
+    role?: string;
+    needsRoleSelection?: boolean;
+  } | undefined;
   const role = (user?.role as "streamer" | "sub") ?? "sub";
 
   return (

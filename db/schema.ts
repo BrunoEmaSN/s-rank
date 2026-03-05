@@ -17,6 +17,7 @@ export const user = pgTable("user", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   role: text("role", { enum: ["streamer", "sub"] }).notNull().default("sub"),
+  needsRoleSelection: boolean("needs_role_selection").notNull().default(false),
 });
 
 export const session = pgTable("session", {

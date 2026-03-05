@@ -1,7 +1,10 @@
+import { getOAuthState } from "better-auth/api";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { customSession } from "better-auth/plugins/custom-session";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
+import { eq } from "drizzle-orm";
 import { db } from "./db";
 import * as schema from "@/db/schema";
 
@@ -33,6 +36,21 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(),
+    customSession(async ({ user, session }) => {
+      const [row] = await db
+        .select({ role: schema.user.role, needsRoleSelection: schema.user.needsRoleSelection })
+        .from(schema.user)
+        .where(eq(schema.user.id, user.id))
+        .limit(1);
+      return {
+        user: {
+          ...user,
+          role: row?.role ?? "sub",
+          needsRoleSelection: row?.needsRoleSelection ?? false,
+        },
+        session,
+      };
+    }),
     genericOAuth({
       config: [
         {
@@ -73,6 +91,43 @@ export const auth = betterAuth({
         required: true,
         defaultValue: "sub",
         input: true,
+      },
+      needsRoleSelection: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+        input: true,
+      },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user, ctx) => {
+          if (!ctx) return { data: user };
+          const isOAuthCallback =
+            ctx.path === "/callback/:id" ||
+            (typeof ctx.path === "string" && ctx.path.includes("callback"));
+          if (!isOAuthCallback) return { data: user };
+
+          const state = (await getOAuthState()) as { role?: string } | null;
+          const role = state?.role;
+          if (role === "streamer" || role === "sub") {
+            return {
+              data: {
+                ...user,
+                role,
+                needsRoleSelection: false,
+              },
+            };
+          }
+          return {
+            data: {
+              ...user,
+              needsRoleSelection: true,
+            },
+          };
+        },
       },
     },
   },

@@ -13,6 +13,7 @@ import {
   Alert,
   Separator,
 } from "@/app/components/ui";
+import { SiGoogle, SiKick, SiTwitch } from "react-icons/si";
 
 type Role = "streamer" | "sub";
 
@@ -33,6 +34,7 @@ export function SignUpForm() {
     const { data, error: err } = await authClient.signIn.social({
       provider,
       callbackURL: "/dashboard",
+      additionalData: { role },
     });
     setSsoLoading(null);
     if (err) {
@@ -48,6 +50,7 @@ export function SignUpForm() {
     const { data, error: err } = await authClient.signIn.oauth2({
       providerId: "kick",
       callbackURL: "/dashboard",
+      additionalData: { role },
     });
     setSsoLoading(null);
     if (err) {
@@ -83,6 +86,14 @@ export function SignUpForm() {
     if (data) router.push("/dashboard");
   }
 
+  const ssoDisabled = loading || ssoLoading !== null;
+  const loadingSpinner = (
+    <span
+      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+      aria-hidden
+    />
+  );
+
   return (
     <div className="w-full">
       <h1
@@ -96,6 +107,36 @@ export function SignUpForm() {
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && <Alert variant="error">{error}</Alert>}
+        <div className="flex gap-4 justify-center">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={ssoDisabled}
+            onClick={() => handleSocialSignIn("google")}
+          >
+            {ssoLoading === "google" ? loadingSpinner : <SiGoogle className="h-5 w-5" />}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={ssoDisabled}
+            onClick={() => handleSocialSignIn("twitch")}
+          >
+            {ssoLoading === "twitch" ? loadingSpinner : <SiTwitch className="h-5 w-5" />}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={ssoDisabled}
+            onClick={handleKickSignIn}
+          >
+            {ssoLoading === "kick" ? loadingSpinner : <SiKick className="h-5 w-5" />}
+          </Button>
+        </div>
+        <Separator>o regístrate con</Separator>
         <Label>
           <LabelText>Nombre</LabelText>
           <Input
@@ -149,39 +190,7 @@ export function SignUpForm() {
         </Label>
         <Button type="submit" disabled={loading} size="lg" className="mt-2">
           {loading ? "Creando cuenta…" : "Crear cuenta"}
-        </Button>
-
-        <Separator>o regístrate con</Separator>
-
-        <div className="flex flex-col gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            disabled={loading || ssoLoading !== null}
-            onClick={() => handleSocialSignIn("google")}
-          >
-            {ssoLoading === "google" ? "Conectando…" : "Google"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            disabled={loading || ssoLoading !== null}
-            onClick={() => handleSocialSignIn("twitch")}
-          >
-            {ssoLoading === "twitch" ? "Conectando…" : "Twitch"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            disabled={loading || ssoLoading !== null}
-            onClick={handleKickSignIn}
-          >
-            {ssoLoading === "kick" ? "Conectando…" : "Kick"}
-          </Button>
-        </div>
+        </Button>  
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
         ¿Ya tienes cuenta?{" "}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TrophyIcon } from "./icons";
+import { SignOutButton } from "./SignOutButton";
 
 type SessionData = { user?: { name?: string; email?: string }; session?: unknown } | null;
 
@@ -18,12 +19,15 @@ export function Header({ session }: { session: SessionData }) {
             Explorar
           </Link>
           {session?.user ? (
-            <Link
-              href="/dashboard"
-              className="rounded-lg border border-accent bg-transparent px-4 py-2 text-sm font-medium text-accent transition hover:bg-accent hover:text-accent-foreground"
-            >
-              Dashboard
-            </Link>
+            <>
+              <Link
+                href="/dashboard"
+                className="rounded-lg border border-accent bg-transparent px-4 py-2 text-sm font-medium text-accent transition hover:bg-accent hover:text-accent-foreground"
+              >
+                Dashboard
+              </Link>
+              <SignOutButton />
+            </>
           ) : (
             <>
               <Link href="/sign-in" className="text-sm text-foreground-muted hover:text-foreground">

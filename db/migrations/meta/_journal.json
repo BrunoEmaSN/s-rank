@@ -29,6 +29,13 @@
       "when": 1772666320000,
       "tag": "0003_favorite_streamers_and_unlock_trigger",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1772677641583,
+      "tag": "0004_new_orphan",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,12 @@ import { TrophyIcon, ChartIcon, PeopleIcon } from "@/app/components/icons";
 
 export default async function DashboardPage() {
   const session = await getSession();
-  const user = session?.user as { name?: string; email?: string; role?: string } | undefined;
+  const user = session?.user as {
+    name?: string;
+    email?: string;
+    role?: string;
+    needsRoleSelection?: boolean;
+  } | undefined;
   const role = (user?.role as "streamer" | "sub") ?? "sub";
 
   return (

@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "needs_role_selection" boolean DEFAULT false NOT NULL;

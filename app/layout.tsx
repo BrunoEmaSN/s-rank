@@ -48,7 +48,7 @@ export default function RootLayout({
       lang="en"
       className={`${notoSansJP.variable} ${mPlus1p.variable} ${quantico.variable} ${zenKakuGothicNew.variable}`}
     >
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         {children}
       </body>
     </html>

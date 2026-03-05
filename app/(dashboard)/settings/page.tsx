@@ -3,7 +3,13 @@ import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const session = await getSession();
-  const user = session?.user as { id?: string; name?: string; email?: string; role?: string } | undefined;
+  const user = session?.user as {
+    id?: string;
+    name?: string;
+    email?: string;
+    role?: string;
+    needsRoleSelection?: boolean;
+  } | undefined;
 
   return (
     <div>

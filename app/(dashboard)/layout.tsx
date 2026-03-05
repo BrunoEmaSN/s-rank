@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth-server";
 import { TrophyIcon } from "../components/icons";
+import { RedirectIfNeedsRole } from "./RedirectIfNeedsRole";
 
 export default async function DashboardLayout({
   children,
@@ -11,10 +12,17 @@ export default async function DashboardLayout({
   const session = await getSession();
   if (!session?.user) redirect("/sign-in");
 
-  const user = session.user as { name?: string; email?: string; image?: string; role?: string };
+  const user = session.user as {
+    name?: string;
+    email?: string;
+    image?: string;
+    role?: string;
+    needsRoleSelection?: boolean;
+  };
 
   return (
     <div className="min-h-screen bg-primary text-foreground">
+      <RedirectIfNeedsRole needsRoleSelection={user.needsRoleSelection === true} />
       <header className="sticky top-0 z-50 border-b border-secondary/50 bg-primary px-4 py-4 md:px-8">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-foreground no-underline">
