@@ -1,6 +1,5 @@
-import { getSession } from "@/lib/auth-server";
-import { Header } from "@/components/Header";
 import { TrophyIcon } from "../../components/icons";
+import { Footer } from "@/components/Footer";
 
 // Mock list of channels for now
 const mockChannels = [
@@ -9,13 +8,9 @@ const mockChannels = [
   { id: "3", name: "Canal Ejemplo 3", platform: "Twitch", trophies: 15 },
 ];
 
-export default async function ExplorePage() {
-  const session = await getSession();
-
+export default function ExplorePage() {
   return (
-    <div className="min-h-screen bg-primary text-foreground">
-      <Header session={session ? { user: session.user } : null} />
-      <main className="mx-auto max-w-6xl px-4 py-12 md:px-8">
+    <main className="mx-auto max-w-6xl px-4 py-10 md:px-8">
         <h1
           className="mb-2 text-2xl font-bold text-foreground"
           style={{ fontFamily: "var(--font-zen-kaku)" }}
@@ -40,7 +35,7 @@ export default async function ExplorePage() {
             </div>
           ))}
         </div>
-      </main>
-    </div>
+        <Footer />
+    </main>
   );
 }

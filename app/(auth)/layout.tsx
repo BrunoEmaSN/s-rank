@@ -1,5 +1,6 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { TrophyIcon } from "../../components/icons";
+import { IoArrowBack } from "react-icons/io5";
 
 export default function AuthLayout({
   children,
@@ -7,16 +8,14 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-primary text-foreground">
-      <header className="border-b border-secondary/50 px-4 py-4 md:px-8">
-        <Link href="/" className="flex items-center gap-2 text-foreground no-underline">
-          <TrophyIcon className="h-8 w-8 text-accent" aria-hidden />
-          <span className="text-xl font-bold" style={{ fontFamily: "var(--font-quantico)" }}>
-            S-Rank
-          </span>
+    <div className="min-h-screen mx-auto max-w-6xl px-4 md:px-8 bg-primary text-foreground relative">
+      <Button variant="ghost" size="lg" className="mb-4 absolute top-4 left-4">
+        <Link href="/" className="flex items-center gap-2">
+          <IoArrowBack className="size-5" />
+          <span className="text-sm">Volver</span>
         </Link>
-      </header>
-      <main className="mx-auto flex min-h-[calc(100vh-72px)] max-w-md flex-col items-center justify-center px-4 py-12">
+      </Button>
+      <main className="mx-auto flex min-h-[calc(100vh-72px)] max-w-md flex-col items-center justify-center py-10">
         {children}
       </main>
     </div>

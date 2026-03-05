@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import {
-  Geist,
-  Geist_Mono,
   Noto_Sans_JP,
   M_PLUS_1p,
   Quantico,
   Zen_Kaku_Gothic_New,
 } from "next/font/google";
+import { getSession } from "@/lib/auth-server";
+import { Header } from "@/components/Header";
 import "./globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -38,18 +38,22 @@ export const metadata: Metadata = {
   description: "S-Rank is the ultimate platform designed for achievement hunters and content creators.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
   return (
     <html
       lang="en"
       className={`${notoSansJP.variable} ${mPlus1p.variable} ${quantico.variable} ${zenKakuGothicNew.variable}`}
     >
       <body className="antialiased" suppressHydrationWarning>
-        {children}
+        <div className="min-h-screen bg-primary text-foreground">
+          <Header session={session ? { user: session.user } : null} />
+          {children}
+        </div>
       </body>
     </html>
   );
