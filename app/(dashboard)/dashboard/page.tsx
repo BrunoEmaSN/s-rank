@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getSession } from "@/lib/auth-server";
 import { TrophyIcon, ChartIcon, PeopleIcon } from "@/components/icons";
 
@@ -25,12 +26,15 @@ export default async function DashboardPage() {
 
       {role === "streamer" ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-6">
+          <Link
+            href="/trophies"
+            className="block rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/50 hover:bg-secondary/70"
+          >
             <TrophyIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
             <h2 className="mb-1 font-semibold text-foreground">Trofeos creados</h2>
             <p className="text-sm text-foreground-muted">Crea y gestiona trofeos para tu comunidad.</p>
-            <p className="mt-2 text-2xl font-bold text-accent">—</p>
-          </div>
+            <p className="mt-2 text-2xl font-bold text-accent">Ver trofeos →</p>
+          </Link>
           <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-6">
             <ChartIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
             <h2 className="mb-1 font-semibold text-foreground">Estadísticas</h2>

@@ -38,13 +38,14 @@ export async function GET(request: NextRequest) {
       MAX_LIMIT,
       Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT)
     );
-    const platform = searchParams.get("platform")?.trim();
+    const platformParam = searchParams.get("platform")?.trim();
     const search = searchParams.get("search")?.trim();
-
-    const platformFilter =
-      platform && PLATFORMS.includes(platform as (typeof PLATFORMS)[number])
-        ? eq(channelTable.platform, platform)
+    const platform =
+      platformParam && PLATFORMS.includes(platformParam as (typeof PLATFORMS)[number])
+        ? (platformParam as (typeof PLATFORMS)[number])
         : undefined;
+
+    const platformFilter = platform ? eq(channelTable.platform, platform) : undefined;
 
     const searchFilter = search
       ? ilike(channelTable.name, `%${search}%`)
