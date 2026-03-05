@@ -1,4 +1,4 @@
-import { EngagementIcon, GamepadIcon, GiftIcon } from "./icons";
+import { ControllerIcon, EngagementIcon, GiftIcon } from "./icons";
 
 const benefits = [
   {
@@ -8,7 +8,7 @@ const benefits = [
       "Los trofeos motivan a tus suscriptores a seguir viendo y participando. Cada logro desbloqueado refuerza su vínculo con tu canal.",
   },
   {
-    icon: GamepadIcon,
+    icon: ControllerIcon,
     title: "Gamificación",
     description:
       "Convierte la experiencia de ver tu stream en un juego. Horas vistas, rachas y metas se traducen en trofeos únicos.",

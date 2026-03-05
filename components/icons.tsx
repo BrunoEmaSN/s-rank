@@ -12,6 +12,7 @@ import {
   GiShield,
   GiPlayButton,
   GiArrowhead,
+  GiConsoleController,
 } from "react-icons/gi";
 
 const iconProps = (className?: string) => ({
@@ -61,4 +62,8 @@ export function PlayIcon({ className }: { className?: string }) {
 
 export function ArrowRightIcon({ className }: { className?: string }) {
   return <GiArrowhead {...iconProps(className)} />;
+}
+
+export function ControllerIcon({ className }: { className?: string }) {
+  return <GiConsoleController {...iconProps(className)} />;
 }

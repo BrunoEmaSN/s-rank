@@ -18,7 +18,7 @@
   --color-foreground: var(--color-foreground);
   --color-foreground-muted: var(--color-foreground-muted);
   /* Fuentes cargadas con next/font en layout.tsx */
-  --font-sans: var(--font-sans-loaded), "Noto Sans JP", ui-sans-serif, system-ui, sans-serif;
+  --font-noto-sans-jp: var(--font-noto-sans-jp-loaded), "Noto Sans JP", ui-sans-serif, system-ui, sans-serif;
   --font-m-plus-1p: var(--font-m-plus-1p-loaded), "M PLUS 1p", ui-sans-serif, system-ui, sans-serif;
   --font-quantico: var(--font-quantico-loaded), "Quantico", ui-sans-serif, system-ui, sans-serif;
   --font-zen-kaku: var(--font-zen-kaku-loaded), "Zen Kaku Gothic New", ui-sans-serif, system-ui, sans-serif;
@@ -27,5 +27,5 @@
 body {
   background: var(--color-primary);
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-m-plus-1p);
 }

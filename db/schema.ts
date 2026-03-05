@@ -4,6 +4,7 @@ import {
   boolean,
   timestamp,
   primaryKey,
+  integer,
 } from "drizzle-orm/pg-core";
 
 // Better Auth core tables (see https://www.better-auth.com/docs/concepts/database)
@@ -56,6 +57,19 @@ export const verification = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Canales (streamers) para explorar
+export const channel = pgTable("channel", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  platform: text("platform", { enum: ["Twitch", "Kick"] }).notNull(),
+  trophies: integer("trophies").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
