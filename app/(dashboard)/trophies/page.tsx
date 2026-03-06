@@ -7,6 +7,7 @@ import { eq, desc } from "drizzle-orm";
 import { TrophyIcon } from "@/components/icons";
 import { TrophyImage } from "@/components/TrophyImage";
 import { buttonBase, buttonVariants, buttonSizes } from "@/components/ui";
+import { IoArrowForward } from "react-icons/io5";
 
 export default async function TrophiesPage() {
   const session = await getSession();
@@ -98,9 +99,9 @@ export default async function TrophiesPage() {
               {t.grantMode === "manual" && (
                 <Link
                   href={`/trophies/${t.id}/grant`}
-                  className="mt-3 inline-block text-sm font-medium text-accent hover:underline"
+                  className="mt-3 text-sm font-medium text-accent hover:underline flex items-center gap-1"
                 >
-                  Otorgar trofeo →
+                  Otorgar trofeo <IoArrowForward className="size-5" />
                 </Link>
               )}
             </li>

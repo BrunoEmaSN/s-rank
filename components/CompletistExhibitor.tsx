@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TrophyIcon } from "@/components/icons";
 import { CanalCompletist } from "@/lib/completist";
+import { IoArrowForward } from "react-icons/io5";
 
 type CompletistExhibitorProps = {
   canales: CanalCompletist[];
@@ -39,9 +40,9 @@ export function CompletistExhibitor({
           </p>
           <Link
             href="/my-trophies"
-            className="mt-4 inline-block text-sm font-medium text-accent hover:underline"
+            className="mt-4 text-sm font-medium text-accent hover:underline flex justify-center items-center gap-1"
           >
-            Ver mis trofeos →
+            Ver mis trofeos <IoArrowForward className="size-5" />
           </Link>
         </div>
       ) : (

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CrownedHeartIcon, TrophyIcon } from "@/components/icons";
 import type { CanalFavorito } from "@/lib/favorite-channel";
+import { IoArrowForward } from "react-icons/io5";
 
 type FavoriteChannelExhibitorProps = {
   canal: CanalFavorito | null;
@@ -35,9 +36,9 @@ export function FavoriteChannelExhibitor({ canal }: FavoriteChannelExhibitorProp
           </p>
           <Link
             href="/explore"
-            className="mt-4 inline-block text-sm font-medium text-accent hover:underline"
+            className="mt-4 text-sm font-medium text-accent hover:underline flex justify-center items-center gap-1"
           >
-            Explorar canales →
+            Explorar canales <IoArrowForward className="size-5" />
           </Link>
         </div>
       ) : (

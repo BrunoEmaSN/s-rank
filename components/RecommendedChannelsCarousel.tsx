@@ -2,8 +2,9 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { TrophyIcon, ArrowRightIcon, TvIcon } from "@/components/icons";
+import { TrophyIcon, TvIcon } from "@/components/icons";
 import type { RecommendedChannel } from "@/lib/recommended-channels";
+import { IoArrowForward } from "react-icons/io5";
 
 type RecommendedChannelsCarouselProps = {
   channels: RecommendedChannel[];
@@ -37,7 +38,7 @@ export function RecommendedChannelsCarousel({ channels }: RecommendedChannelsCar
             className="flex items-center gap-1 text-sm font-medium text-accent hover:underline"
           >
             Ver todos
-            <ArrowRightIcon className="h-4 w-4" />
+            <IoArrowForward className="size-5" />
           </Link>
         )}
       </div>
@@ -56,9 +57,9 @@ export function RecommendedChannelsCarousel({ channels }: RecommendedChannelsCar
           </p>
           <Link
             href="/explore"
-            className="mt-4 inline-block text-sm font-medium text-accent hover:underline"
+            className="mt-4 text-sm font-medium text-accent hover:underline flex justify-center items-center gap-1"
           >
-            Explorar canales →
+            Explorar canales <IoArrowForward className="size-5" />
           </Link>
         </div>
       ) : (

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TrophyIcon, TvIcon, PeopleIcon, ChartIcon } from "@/components/icons";
+import { IoArrowForward } from "react-icons/io5";
 
 const recommendations = [
   {
@@ -50,7 +51,9 @@ export function StreamerRecommendationsPanels() {
             <Icon className="mb-3 h-9 w-9 text-accent" aria-hidden />
             <h3 className="mb-1 font-semibold text-foreground">{title}</h3>
             <p className="text-sm text-foreground-muted">{description}</p>
-            <p className="mt-2 text-sm font-medium text-accent">Ir →</p>
+            <p className="mt-2 text-sm font-medium text-accent flex justify-center items-center gap-1">
+              Ir <IoArrowForward className="size-5" />
+            </p>
           </Link>
         ))}
       </div>

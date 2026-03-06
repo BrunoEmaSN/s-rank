@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:seed": "npx tsx db/seed/run.ts"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.5.3",
@@ -24,6 +25,8 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.18.0",

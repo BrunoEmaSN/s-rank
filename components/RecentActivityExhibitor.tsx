@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TrophyIcon, TvIcon } from "@/components/icons";
 import type { ActividadRecienteItem } from "@/lib/recent-activity";
+import { IoArrowForward } from "react-icons/io5";
 
 type RecentActivityExhibitorProps = {
   items: ActividadRecienteItem[];
@@ -42,9 +43,9 @@ export function RecentActivityExhibitor({ items }: RecentActivityExhibitorProps)
           </p>
           <Link
             href="/explore"
-            className="mt-4 inline-block text-sm font-medium text-accent hover:underline"
+            className="mt-4 text-sm font-medium text-accent hover:underline flex justify-center items-center gap-1"
           >
-            Explorar canales →
+            Explorar canales <IoArrowForward className="size-5" />
           </Link>
         </div>
       ) : (

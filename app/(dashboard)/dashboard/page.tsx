@@ -7,6 +7,7 @@ import { TrophyIcon, ChartIcon, PeopleIcon } from "@/components/icons";
 import { getRecommendedChannels } from "@/lib/recommended-channels";
 import { RecommendedChannelsCarousel } from "@/components/RecommendedChannelsCarousel";
 import { StreamerRecommendationsPanels } from "@/components/StreamerRecommendationsPanels";
+import { IoArrowForward } from "react-icons/io5";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -68,7 +69,9 @@ export default async function DashboardPage() {
             <TrophyIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
             <h2 className="mb-1 font-semibold text-foreground">Trofeos creados</h2>
             <p className="text-sm text-foreground-muted">Crea y gestiona trofeos para tu comunidad.</p>
-            <p className="mt-2 text-2xl font-bold text-accent">Ver trofeos →</p>
+            <p className="mt-2 text-2xl font-bold text-accent flex justify-end items-center gap-1">
+              Ver trofeos <IoArrowForward className="size-5" />
+            </p>
           </Link>
           <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-6">
             <ChartIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
@@ -83,7 +86,9 @@ export default async function DashboardPage() {
             <PeopleIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
             <h2 className="mb-1 font-semibold text-foreground">Seguidores</h2>
             <p className="text-sm text-foreground-muted">Usuarios que te siguen.</p>
-            <p className="mt-2 text-2xl font-bold text-accent">{followersCount} →</p>
+            <p className="mt-2 text-2xl font-bold text-accent flex justify-end items-center gap-1">
+              {followersCount} <IoArrowForward className="size-5" />
+            </p>
           </Link>
         </div>
       ) : (
@@ -95,7 +100,9 @@ export default async function DashboardPage() {
             <TrophyIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
             <h2 className="mb-1 font-semibold text-foreground">Trofeos desbloqueados</h2>
             <p className="text-sm text-foreground-muted">Tu progreso en los canales que sigues.</p>
-            <p className="mt-2 text-2xl font-bold text-accent">{unlockedTrophiesCount} →</p>
+            <p className="mt-2 text-2xl font-bold text-accent flex justify-end items-center gap-1">
+              {unlockedTrophiesCount} <IoArrowForward className="size-5" />
+            </p>
           </Link>
           <Link
             href="/following"
@@ -104,7 +111,9 @@ export default async function DashboardPage() {
             <PeopleIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
             <h2 className="mb-1 font-semibold text-foreground">Canales seguidos</h2>
             <p className="text-sm text-foreground-muted">Explora canales y desbloquea trofeos.</p>
-            <p className="mt-2 text-2xl font-bold text-accent">{followingCount} →</p>
+            <p className="mt-2 text-2xl font-bold text-accent flex justify-end items-center gap-1">
+              {followingCount} <IoArrowForward className="size-5" />
+            </p>
           </Link>
         </div>
       )}
