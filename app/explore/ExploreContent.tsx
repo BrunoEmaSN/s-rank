@@ -127,7 +127,9 @@ export function ExploreContent({ user }: { user: User }) {
 
   return (
     <div className="flex min-h-[calc(100vh-var(--header-height,0px))]">
-      <Sidebar user={user} />
+      {user && (
+        <Sidebar user={user} />
+      )}
       <main className="mx-auto min-h-screen max-w-6xl px-4 py-10 md:px-8">
         <h1
           className="mb-2 text-2xl font-bold text-foreground"

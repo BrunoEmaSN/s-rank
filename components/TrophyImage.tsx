@@ -50,7 +50,7 @@ export function TrophyImage({
         alt={alt}
         width={width}
         height={height}
-        className={`rounded-lg object-cover ${className}`}
+        className={`rounded-lg object-cover w-[${width}px] h-[${height}px] ${className}`}
       />
     );
   }
@@ -62,7 +62,8 @@ export function TrophyImage({
         width={width}
         height={height}
         alt={alt}
-        className={`rounded-lg object-cover ${className}`}
+        className={`rounded-lg object-cover w-[${width}px] h-[${height}px] ${className}`}
+        style={{ width: `${width}px`, height: `${height}px` }}
       />
     );
   }

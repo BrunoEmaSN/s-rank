@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getSession } from "@/lib/auth-server";
 import {
   getCommunitiesForUser,
   getCommunitiesFromFollowedStreamers,
   getRecommendedCommunities,
 } from "@/lib/community";
-import { CreateCommunityForm } from "./CreateCommunityForm";
 import { RecommendedCommunities } from "@/components/RecommendedCommunities";
+import { StreamerCommunityTips } from "@/components/StreamerCommunityTips";
+import { CreateCommunityForm } from "./CreateCommunityForm";
 
 export default async function CommunityPage() {
   const session = await getSession();
@@ -20,7 +22,7 @@ export default async function CommunityPage() {
   const [myCommunities, fromFollowed, recommended] = await Promise.all([
     getCommunitiesForUser(userId),
     getCommunitiesFromFollowedStreamers(userId),
-    getRecommendedCommunities(userId, 6),
+    isStreamer ? Promise.resolve([]) : getRecommendedCommunities(userId, 6),
   ]);
 
   const ownedCommunity = myCommunities.find((c) => c.isOwner);
@@ -41,11 +43,23 @@ export default async function CommunityPage() {
       </p>
 
       {isStreamer && !ownedCommunity && (
-        <div className="mb-8 rounded-xl border border-secondary/80 bg-secondary/30 p-6">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">
-            Crear tu comunidad
-          </h2>
-          <CreateCommunityForm />
+        <div className="mb-8 flex flex-col gap-6 rounded-xl border border-secondary/80 bg-secondary/30 p-6 md:flex-row md:items-center md:gap-8">
+          <div className="flex-1">
+            <h2 className="mb-4 text-lg font-semibold text-foreground">
+              Crear tu comunidad
+            </h2>
+            <CreateCommunityForm />
+          </div>
+          <div className="relative hidden min-h-[250px] rounded-md overflow-hidden flex-1 lg:block">
+            <Image
+              src="/community.png"
+              alt="Ilustración de comunidad: personas conectadas"
+              fill
+              className="object-cover object-center"
+              priority
+              sizes="(max-width: 768px) 0vw, 50vw"
+            />
+          </div>
         </div>
       )}
 
@@ -153,7 +167,11 @@ export default async function CommunityPage() {
         </p>
       )}
 
-      <RecommendedCommunities communities={recommended} />
+      {isStreamer ? (
+        <StreamerCommunityTips />
+      ) : (
+        <RecommendedCommunities communities={recommended} />
+      )}
     </div>
   );
 }

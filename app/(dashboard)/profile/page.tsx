@@ -47,7 +47,7 @@ export default async function ProfilePage() {
                   {user?.image ? (
                     <img src={user?.image ?? ""} alt="Avatar" className="shrink-0 items-center justify-center rounded-full bg-primary" />
                   ) : (
-                    <div className="shrink-0 items-center justify-center rounded-full bg-primary">
+                    <div className="shrink-0 items-center justify-center h-16 w-16 flex rounded-full bg-primary">
                       <span className="text-xl font-semibold text-foreground">
                         {user?.name?.charAt(0).toUpperCase()}
                       </span>

@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { TrophyIcon } from "./icons";
 
 export function Hero() {
   return (
     <section className="bg-primary px-4 py-16 md:px-8 md:py-24">
       <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-        <TrophyIcon className="mb-6 h-20 w-20 text-accent md:h-24 md:w-24" aria-hidden />
         <h1
-          className="mb-4 text-3xl font-bold leading-tight text-foreground md:text-4xl lg:text-5xl"
+          className="mb-4 text-3xl font-bold leading-tight text-foreground md:text-4xl lg:text-5xl mt-6"
           style={{ fontFamily: "var(--font-zen-kaku)" }}
         >
           Sistema de trofeos para streamers
