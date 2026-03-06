@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { TrophyIcon } from "./icons";
 import { AccountDropdown } from "./AccountDropdown";
+import Image from "next/image";
 
 type SessionData = {
   user?: { name?: string; email?: string; role?: string };
@@ -26,10 +27,8 @@ export function Header({ session }: { session: SessionData }) {
     <header className="sticky top-0 z-50 border-b border-secondary/50 bg-primary px-4 py-4 md:px-8">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
         <Link href="/" className="flex items-center gap-2 text-foreground no-underline">
-          <TrophyIcon className="h-8 w-8 text-accent" aria-hidden />
-          <span className="text-xl font-bold" style={{ fontFamily: "var(--font-quantico)" }}>
-            S-Rank
-          </span>
+          <Image src="/logo.svg" alt="S-Rank" className="translate-y-1" width={40} height={40} />
+          <span className="text-xl font-bold" style={{ fontFamily: "var(--font-quantico)" }}>RANK</span>
         </Link>
         <nav className="flex items-center gap-4">
           {user ? (

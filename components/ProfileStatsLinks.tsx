@@ -25,7 +25,7 @@ export function ProfileStatsLinks({ role }: ProfileStatsLinksProps) {
   const followers = !loaded && loading ? "—" : followersCount;
 
   return (
-    <div className="mb-6 flex flex-wrap gap-4 border-t border-secondary/80 pt-4">
+    <div className="mb-6 flex flex-wrap gap-4 pt-4">
       <Link
         href="/following"
         className="text-sm font-medium text-accent hover:underline"
