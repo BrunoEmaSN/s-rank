@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth-server";
-import { db } from "@/lib/db";
-import { favoriteStreamers } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
 import { TrophyIcon } from "@/components/icons";
-import { getCanalesCompletists } from "@/lib/completist";
-import { getFavoriteChannel } from "@/lib/favorite-channel";
-import { getRecentActivity } from "@/lib/recent-activity";
-import { CompletistExhibitor } from "@/components/CompletistExhibitor";
+import { ProfileStatsLinks } from "@/components/ProfileStatsLinks";
 import { FavoriteChannelExhibitor } from "@/components/FavoriteChannelExhibitor";
+import { CompletistExhibitor } from "@/components/CompletistExhibitor";
 import { RecentActivityExhibitor } from "@/components/RecentActivityExhibitor";
 
 export default async function ProfilePage() {
@@ -21,34 +16,6 @@ export default async function ProfilePage() {
     needsRoleSelection?: boolean;
   } | undefined;
   const role = (user?.role as "streamer" | "sub") ?? "sub";
-  const userId = session?.user?.id;
-
-  const [followingCountRow, followersCountRow] = userId
-    ? await Promise.all([
-        db
-          .select({ count: sql<number>`count(*)::int` })
-          .from(favoriteStreamers)
-          .where(eq(favoriteStreamers.userId, userId)),
-        db
-          .select({ count: sql<number>`count(*)::int` })
-          .from(favoriteStreamers)
-          .where(eq(favoriteStreamers.streamerId, userId)),
-      ])
-    : [[{ count: 0 }], [{ count: 0 }]];
-
-  const followingCount = followingCountRow[0]?.count ?? 0;
-  const followersCount = followersCountRow[0]?.count ?? 0;
-
-  const [favoriteChannel, completistData, recentActivity] =
-    userId && role === "sub"
-      ? await Promise.all([
-          getFavoriteChannel(userId),
-          getCanalesCompletists(userId),
-          getRecentActivity(userId),
-        ])
-      : userId
-        ? [null, { canales: [], totalCanalesCompletados: 0, totalTrofeosEnCompletados: 0 }, await getRecentActivity(userId)]
-        : [null, { canales: [], totalCanalesCompletados: 0, totalTrofeosEnCompletados: 0 }, []];
 
   return (
     <div>
@@ -64,7 +31,9 @@ export default async function ProfilePage() {
             {(user?.name ?? user?.email ?? "?").charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-lg font-semibold text-foreground">{user?.name ?? "Sin nombre"}</p>
+            <p className="text-lg font-semibold text-foreground">
+              {user?.name ?? "Sin nombre"}
+            </p>
             <p className="text-sm text-foreground-muted">{user?.email}</p>
             <p className="mt-1 text-xs text-accent">
               {role === "streamer" ? "Streamer" : "Suscriptor / Viewer"}
@@ -72,26 +41,14 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-4 border-t border-secondary/80 pt-4">
-          <Link
-            href="/following"
-            className="text-sm font-medium text-accent hover:underline"
-          >
-            Siguiendo ({followingCount})
-          </Link>
-          {role === "streamer" && (
-            <Link
-              href="/followers"
-              className="text-sm font-medium text-accent hover:underline"
-            >
-              Seguidores ({followersCount})
-            </Link>
-          )}
-        </div>
+        <ProfileStatsLinks role={role} />
 
         {role === "streamer" ? (
           <div className="space-y-2 text-sm text-foreground-muted">
-            <p>Conecta tu canal de Twitch o Kick desde Ajustes para crear trofeos y ver estadísticas.</p>
+            <p>
+              Conecta tu canal de Twitch o Kick desde Ajustes para crear trofeos
+              y ver estadísticas.
+            </p>
             <div className="flex gap-2 pt-2">
               <TrophyIcon className="h-5 w-5 text-accent" aria-hidden />
               <span>Panel de trofeos disponible en el dashboard.</span>
@@ -106,17 +63,13 @@ export default async function ProfilePage() {
 
       {role === "sub" && (
         <div className="mt-8 space-y-8">
-          <FavoriteChannelExhibitor canal={favoriteChannel} />
-          <CompletistExhibitor
-            canales={completistData.canales}
-            totalCanalesCompletados={completistData.totalCanalesCompletados}
-            totalTrofeosEnCompletados={completistData.totalTrofeosEnCompletados}
-          />
+          <FavoriteChannelExhibitor />
+          <CompletistExhibitor />
         </div>
       )}
 
       <div className="mt-8">
-        <RecentActivityExhibitor items={recentActivity} />
+        <RecentActivityExhibitor />
       </div>
     </div>
   );

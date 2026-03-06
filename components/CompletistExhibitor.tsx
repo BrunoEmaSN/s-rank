@@ -1,19 +1,27 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import { TrophyIcon } from "@/components/icons";
-import { CanalCompletist } from "@/lib/completist";
 import { IoArrowForward } from "react-icons/io5";
+import { useCompletistStore } from "@/store/useCompletistStore";
 
-type CompletistExhibitorProps = {
-  canales: CanalCompletist[];
-  totalCanalesCompletados: number;
-  totalTrofeosEnCompletados: number;
-};
+export function CompletistExhibitor() {
+  const {
+    canales,
+    totalCanalesCompletados,
+    totalTrofeosEnCompletados,
+    loaded,
+    loading,
+    fetchCompletist,
+  } = useCompletistStore();
 
-export function CompletistExhibitor({
-  canales,
-  totalCanalesCompletados,
-  totalTrofeosEnCompletados,
-}: CompletistExhibitorProps) {
+  useEffect(() => {
+    fetchCompletist();
+  }, [fetchCompletist]);
+
+  const showPlaceholder = !loaded && loading;
+
   return (
     <section className="rounded-xl border border-secondary/80 bg-secondary/50 p-6">
       <h2
@@ -26,7 +34,12 @@ export function CompletistExhibitor({
         Canales en los que has desbloqueado todos los trofeos.
       </p>
 
-      {canales.length === 0 ? (
+      {showPlaceholder ? (
+        <div className="rounded-xl border border-secondary/80 bg-primary/50 py-12 text-center">
+          <div className="mx-auto mb-3 h-12 w-12 animate-pulse rounded-full bg-secondary" />
+          <p className="text-sm text-foreground-muted">Cargando...</p>
+        </div>
+      ) : canales.length === 0 ? (
         <div className="rounded-xl border border-secondary/80 bg-primary/50 py-12 text-center">
           <TrophyIcon
             className="mx-auto mb-3 h-12 w-12 text-foreground-muted"
@@ -40,7 +53,7 @@ export function CompletistExhibitor({
           </p>
           <Link
             href="/my-trophies"
-            className="mt-4 text-sm font-medium text-accent hover:underline flex justify-center items-center gap-1"
+            className="mt-4 flex items-center justify-center gap-1 text-sm font-medium text-accent hover:underline"
           >
             Ver mis trofeos <IoArrowForward className="size-5" />
           </Link>
@@ -76,7 +89,9 @@ export function CompletistExhibitor({
                   </div>
                 </div>
                 <div className="p-3">
-                  <p className="truncate text-sm font-medium text-foreground">{canal.name}</p>
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {canal.name}
+                  </p>
                 </div>
               </Link>
             ))}
@@ -84,12 +99,20 @@ export function CompletistExhibitor({
 
           <div className="mt-6 flex flex-wrap gap-8 border-t border-secondary/80 pt-6">
             <div>
-              <p className="text-2xl font-bold text-foreground">{totalCanalesCompletados}</p>
-              <p className="text-sm text-foreground-muted">Canales completados</p>
+              <p className="text-2xl font-bold text-foreground">
+                {totalCanalesCompletados}
+              </p>
+              <p className="text-sm text-foreground-muted">
+                Canales completados
+              </p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-foreground">{totalTrofeosEnCompletados}</p>
-              <p className="text-sm text-foreground-muted">Trofeos en canales completados</p>
+              <p className="text-2xl font-bold text-foreground">
+                {totalTrofeosEnCompletados}
+              </p>
+              <p className="text-sm text-foreground-muted">
+                Trofeos en canales completados
+              </p>
             </div>
           </div>
         </>
