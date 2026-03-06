@@ -187,3 +187,71 @@ export const favoriteStreamers = pgTable(
   },
   (t) => [unique("favorite_streamers_user_id_streamer_id_key").on(t.userId, t.streamerId)]
 );
+
+// Community: one per streamer
+export const community = pgTable(
+  "community",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    streamerId: text("streamer_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("community_streamer_id_key").on(t.streamerId)]
+);
+
+// Community members
+export const communityMember = pgTable(
+  "community_member",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    communityId: uuid("community_id")
+      .notNull()
+      .references(() => community.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("community_member_community_id_user_id_key").on(t.communityId, t.userId)]
+);
+
+// Community feed posts (trophy unlock auto or manual share)
+export const communityPost = pgTable("community_post", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  communityId: uuid("community_id")
+    .notNull()
+    .references(() => community.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => profiles.id, { onDelete: "cascade" }),
+  type: text("type", { enum: ["trophy_unlock", "trophy_share"] }).notNull(),
+  trophyId: uuid("trophy_id").references(() => trophies.id, { onDelete: "set null" }),
+  userTrophyId: uuid("user_trophy_id").references(() => userTrophies.id, { onDelete: "set null" }),
+  message: text("message"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Trophy requests (user requests manual trophy with optional proof)
+export const trophyRequest = pgTable("trophy_request", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  communityId: uuid("community_id")
+    .notNull()
+    .references(() => community.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => profiles.id, { onDelete: "cascade" }),
+  trophyId: uuid("trophy_id")
+    .notNull()
+    .references(() => trophies.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  proofImageUrl: text("proof_image_url"),
+  status: text("status", { enum: ["pending", "approved", "rejected"] }).notNull().default("pending"),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  reviewedBy: text("reviewed_by").references(() => profiles.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

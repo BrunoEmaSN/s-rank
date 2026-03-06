@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
+import Link from "next/link";
 import { TrophyIcon } from "@/components/icons";
 import { Footer } from "@/components/Footer";
 import { useChannelsStore } from "@/store/useChannelsStore";
@@ -201,6 +202,14 @@ export function ExploreContent() {
                   <h2 className="font-semibold text-foreground">{channel.name}</h2>
                   <p className="text-sm text-foreground-muted">{channel.platform}</p>
                   <p className="mt-1 text-xs text-accent">{channel.trophies} trofeos</p>
+                  {channel.communityId && (
+                    <Link
+                      href={`/community/${channel.communityId}`}
+                      className="mt-2 inline-block text-sm text-accent hover:underline"
+                    >
+                      Ver comunidad
+                    </Link>
+                  )}
                   <div className="mt-4 flex-1">
                     {isFollowing ? (
                       <Button

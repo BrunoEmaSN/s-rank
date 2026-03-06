@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { channel as channelTable } from "@/db/schema";
+import { channel as channelTable, community } from "@/db/schema";
 import { ilike, eq, and, sql, desc } from "drizzle-orm";
 
 const PLATFORMS = ["Twitch", "Kick"] as const;
@@ -16,6 +16,7 @@ export type ChannelRow = {
   trophies: number;
   createdAt: Date;
   updatedAt: Date;
+  communityId?: string | null;
 };
 
 export type ChannelsApiResponse = {
@@ -56,10 +57,20 @@ export async function GET(request: NextRequest) {
         ? and(platformFilter, searchFilter)
         : platformFilter ?? searchFilter ?? undefined;
 
-    const [data, countResult] = await Promise.all([
+    const [rows, countResult] = await Promise.all([
       db
-        .select()
+        .select({
+          id: channelTable.id,
+          userId: channelTable.userId,
+          name: channelTable.name,
+          platform: channelTable.platform,
+          trophies: channelTable.trophies,
+          createdAt: channelTable.createdAt,
+          updatedAt: channelTable.updatedAt,
+          communityId: community.id,
+        })
         .from(channelTable)
+        .leftJoin(community, eq(community.streamerId, channelTable.userId))
         .where(whereClause)
         .orderBy(desc(channelTable.trophies), desc(channelTable.createdAt))
         .limit(limit)
@@ -72,6 +83,17 @@ export async function GET(request: NextRequest) {
 
     const total = countResult[0]?.count ?? 0;
     const totalPages = Math.ceil(total / limit);
+
+    const data: ChannelRow[] = rows.map((r) => ({
+      id: r.id,
+      userId: r.userId,
+      name: r.name,
+      platform: r.platform,
+      trophies: r.trophies,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      communityId: r.communityId ?? undefined,
+    }));
 
     const response: ChannelsApiResponse = {
       data,

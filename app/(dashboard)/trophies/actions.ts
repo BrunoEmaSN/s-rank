@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { trophies, trophyRules, userTrophies } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { createCommunityPostForUnlock } from "@/lib/community-feed";
 
 export type TrophyRarity = "common" | "rare" | "epic" | "legendary";
 export type TrophySourcePlatform = "Twitch" | "Kick";
@@ -95,7 +96,7 @@ export async function grantTrophy(
   if (trophy.streamerId !== streamerId) return { ok: false, error: "No puedes otorgar este trofeo" };
   if (trophy.grantMode !== "manual") return { ok: false, error: "Este trofeo se desbloquea automáticamente por reglas" };
 
-  await db
+  const [upserted] = await db
     .insert(userTrophies)
     .values({
       userId,
@@ -106,7 +107,12 @@ export async function grantTrophy(
     .onConflictDoUpdate({
       target: [userTrophies.userId, userTrophies.trophyId],
       set: { isUnlocked: true, earnedAt: new Date() },
-    });
+    })
+    .returning({ id: userTrophies.id });
+
+  if (upserted?.id) {
+    await createCommunityPostForUnlock(streamerId, userId, trophyId, upserted.id);
+  }
 
   revalidatePath("/dashboard");
   revalidatePath("/trophies");

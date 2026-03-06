@@ -36,6 +36,9 @@ export function Header({ session }: { session: SessionData }) {
               <Link href="/dashboard" className={navLinkClass(pathname, "/dashboard")}>
                 Dashboard
               </Link>
+              <Link href="/community" className={navLinkClass(pathname, "/community")}>
+                Comunidad
+              </Link>
               <Link href="/explore" className={navLinkClass(pathname, "/explore", true)}>
                 Explorar
               </Link>

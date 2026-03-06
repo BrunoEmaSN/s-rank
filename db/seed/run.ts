@@ -23,14 +23,16 @@ import { seedUsers } from "./seeders/01-users";
 import { seedChannels } from "./seeders/02-channels";
 import { seedTrophies } from "./seeders/03-trophies";
 import { seedFollowsAndStats } from "./seeders/04-follows-and-stats";
+import { seedCommunity } from "./seeders/05-community";
 
-type SeederName = "users" | "channels" | "trophies" | "follows-and-stats";
+type SeederName = "users" | "channels" | "trophies" | "follows-and-stats" | "community";
 
 const SEEDERS: { name: SeederName; run: (db: typeof import("./db").db) => Promise<void> }[] = [
   { name: "users", run: seedUsers },
   { name: "channels", run: seedChannels },
   { name: "trophies", run: seedTrophies },
   { name: "follows-and-stats", run: seedFollowsAndStats },
+  { name: "community", run: seedCommunity },
 ];
 
 async function main() {
@@ -49,7 +51,7 @@ async function main() {
     : SEEDERS;
 
   if (toRun.length === 0) {
-    console.log("Ningún seeder seleccionado. Usa --only=users,channels,trophies,follows-and-stats");
+    console.log("Ningún seeder seleccionado. Usa --only=users,channels,trophies,follows-and-stats,community");
     process.exit(1);
   }
 

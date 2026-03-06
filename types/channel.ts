@@ -6,6 +6,7 @@ export type Channel = {
   trophies: number;
   createdAt: string;
   updatedAt: string;
+  communityId?: string;
 };
 
 export type ChannelsPagination = {
