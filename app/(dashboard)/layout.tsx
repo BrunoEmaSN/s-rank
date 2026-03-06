@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-server";
 import { RedirectIfNeedsRole } from "./RedirectIfNeedsRole";
 import { Footer } from "@/components/Footer";
+import { Sidebar } from "@/components/Sidebar";
 
 export default async function DashboardLayout({
   children,
@@ -22,7 +23,12 @@ export default async function DashboardLayout({
   return (
     <>
       <RedirectIfNeedsRole needsRoleSelection={user.needsRoleSelection === true} />
-      <main className="mx-auto max-w-6xl px-4 py-10 md:px-8">{children}</main>
+      <div className="flex min-h-[calc(100vh-var(--header-height,0px))]">
+        <Sidebar user={user} />
+        <main className="flex-1 px-4 py-10 md:px-8">
+          <div className="mx-auto max-w-4xl">{children}</div>
+        </main>
+      </div>
       <Footer />
     </>
   );

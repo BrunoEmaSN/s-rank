@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TrophyIcon } from "./icons";
+import { HiOutlineBell } from "react-icons/hi";
 import { AccountDropdown } from "./AccountDropdown";
 import Image from "next/image";
 
 type SessionData = {
-  user?: { name?: string; email?: string; role?: string };
+  user?: { name?: string; email?: string; role?: string; image?: string };
 } | null;
 
 function navLinkClass(pathname: string, href: string, exact?: boolean) {
@@ -33,14 +33,12 @@ export function Header({ session }: { session: SessionData }) {
         <nav className="flex items-center gap-4">
           {user ? (
             <>
-              <Link href="/dashboard" className={navLinkClass(pathname, "/dashboard")}>
-                Dashboard
-              </Link>
-              <Link href="/community" className={navLinkClass(pathname, "/community")}>
-                Comunidad
-              </Link>
-              <Link href="/explore" className={navLinkClass(pathname, "/explore", true)}>
-                Explorar
+              <Link
+                href="/notifications"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition hover:bg-secondary/80 hover:text-foreground"
+                aria-label="Notificaciones"
+              >
+                <HiOutlineBell className="h-5 w-5" aria-hidden />
               </Link>
               <AccountDropdown user={user} />
             </>

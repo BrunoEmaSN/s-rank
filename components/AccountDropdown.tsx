@@ -6,7 +6,7 @@ import { useRef, useEffect, useState } from "react";
 import { HiOutlineUser, HiOutlineCog } from "react-icons/hi";
 import { SignOutButton } from "./SignOutButton";
 
-type User = { name?: string; email?: string; role?: string };
+type User = { name?: string; email?: string; role?: string; image?: string };
 
 function getInitials(user: User): string {
   if (user.name?.trim()) {
@@ -56,7 +56,13 @@ export function AccountDropdown({
         aria-haspopup="true"
         aria-label="Abrir menú de cuenta"
       >
-        {initials}
+        {user?.image ? (
+          <img src={user?.image ?? ""} alt="Avatar" className="shrink-0 items-center justify-center rounded-full bg-primary" />
+        ) : (
+          <div className="shrink-0 items-center justify-center rounded-full bg-primary">
+            {initials}
+          </div>
+        )}
       </button>
 
       {open && (

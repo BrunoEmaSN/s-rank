@@ -5,6 +5,7 @@ import { FavoriteChannelExhibitor } from "@/components/FavoriteChannelExhibitor"
 import { CompletistExhibitor } from "@/components/CompletistExhibitor";
 import { RecentActivityExhibitor } from "@/components/RecentActivityExhibitor";
 import { getTrophyCountsByRarity } from "@/lib/profile-trophy-counts";
+import Image from "next/image";
 
 const TROPHY_RARITIES = [
   { key: "common" as const, label: "Normales", color: "text-gray-400" },
@@ -42,8 +43,16 @@ export default async function ProfilePage() {
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="flex-1 min-w-0">
               <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-semibold text-foreground-muted">
-                  {(user?.name ?? user?.email ?? "?").charAt(0).toUpperCase()}
+                <div className="flex h-16 w-16 ">
+                  {user?.image ? (
+                    <img src={user?.image ?? ""} alt="Avatar" className="shrink-0 items-center justify-center rounded-full bg-primary" />
+                  ) : (
+                    <div className="shrink-0 items-center justify-center rounded-full bg-primary">
+                      <span className="text-xl font-semibold text-foreground">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="min-w-0">
                   <p className="text-lg font-semibold text-foreground">
