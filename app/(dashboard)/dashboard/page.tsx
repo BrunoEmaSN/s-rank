@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { favoriteStreamers, userTrophies } from "@/db/schema";
 import { eq, sql, and } from "drizzle-orm";
 import { TrophyIcon, ChartIcon, PeopleIcon } from "@/components/icons";
+import { getRecommendedChannels } from "@/lib/recommended-channels";
+import { RecommendedChannelsCarousel } from "@/components/RecommendedChannelsCarousel";
+import { StreamerRecommendationsPanels } from "@/components/StreamerRecommendationsPanels";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -41,6 +44,8 @@ export default async function DashboardPage() {
   const followingCount = followingCountRow[0]?.count ?? 0;
   const followersCount = followersCountRow[0]?.count ?? 0;
   const unlockedTrophiesCount = unlockedTrophiesCountRow[0]?.count ?? 0;
+
+  const recommendedChannels = role === "sub" ? await getRecommendedChannels(8) : [];
 
   return (
     <div>
@@ -103,6 +108,14 @@ export default async function DashboardPage() {
           </Link>
         </div>
       )}
+
+      <div className="mt-8">
+        {role === "streamer" ? (
+          <StreamerRecommendationsPanels />
+        ) : (
+          <RecommendedChannelsCarousel channels={recommendedChannels} />
+        )}
+      </div>
     </div>
   );
 }

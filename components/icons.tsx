@@ -13,6 +13,8 @@ import {
   GiPlayButton,
   GiArrowhead,
   GiConsoleController,
+  GiCrownedHeart,
+  GiTv,
 } from "react-icons/gi";
 
 const iconProps = (className?: string) => ({
@@ -66,4 +68,12 @@ export function ArrowRightIcon({ className }: { className?: string }) {
 
 export function ControllerIcon({ className }: { className?: string }) {
   return <GiConsoleController {...iconProps(className)} />;
+}
+
+export function CrownedHeartIcon({ className }: { className?: string }) {
+  return <GiCrownedHeart {...iconProps(className)} />;
+}
+
+export function TvIcon({ className }: { className?: string }) {
+  return <GiTv {...iconProps(className)} />;
 }

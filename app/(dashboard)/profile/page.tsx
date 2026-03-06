@@ -4,6 +4,12 @@ import { db } from "@/lib/db";
 import { favoriteStreamers } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { TrophyIcon } from "@/components/icons";
+import { getCanalesCompletists } from "@/lib/completist";
+import { getFavoriteChannel } from "@/lib/favorite-channel";
+import { getRecentActivity } from "@/lib/recent-activity";
+import { CompletistExhibitor } from "@/components/CompletistExhibitor";
+import { FavoriteChannelExhibitor } from "@/components/FavoriteChannelExhibitor";
+import { RecentActivityExhibitor } from "@/components/RecentActivityExhibitor";
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -32,6 +38,17 @@ export default async function ProfilePage() {
 
   const followingCount = followingCountRow[0]?.count ?? 0;
   const followersCount = followersCountRow[0]?.count ?? 0;
+
+  const [favoriteChannel, completistData, recentActivity] =
+    userId && role === "sub"
+      ? await Promise.all([
+          getFavoriteChannel(userId),
+          getCanalesCompletists(userId),
+          getRecentActivity(userId),
+        ])
+      : userId
+        ? [null, { canales: [], totalCanalesCompletados: 0, totalTrofeosEnCompletados: 0 }, await getRecentActivity(userId)]
+        : [null, { canales: [], totalCanalesCompletados: 0, totalTrofeosEnCompletados: 0 }, []];
 
   return (
     <div>
@@ -85,6 +102,21 @@ export default async function ProfilePage() {
             <p>Explora canales y desbloquea trofeos viendo streams y participando.</p>
           </div>
         )}
+      </div>
+
+      {role === "sub" && (
+        <div className="mt-8 space-y-8">
+          <FavoriteChannelExhibitor canal={favoriteChannel} />
+          <CompletistExhibitor
+            canales={completistData.canales}
+            totalCanalesCompletados={completistData.totalCanalesCompletados}
+            totalTrofeosEnCompletados={completistData.totalTrofeosEnCompletados}
+          />
+        </div>
+      )}
+
+      <div className="mt-8">
+        <RecentActivityExhibitor items={recentActivity} />
       </div>
     </div>
   );
