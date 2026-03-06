@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { TrophyIcon } from "@/components/icons";
 import { Footer } from "@/components/Footer";
 import { useChannelsStore } from "@/store/useChannelsStore";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import type { Channel } from "@/types/channel";
 
 export function ExploreContent() {
   const {
@@ -21,6 +22,9 @@ export function ExploreContent() {
     setPage,
   } = useChannelsStore();
 
+  const [followingIds, setFollowingIds] = useState<Set<string> | null>(null);
+  const [followLoading, setFollowLoading] = useState<string | null>(null);
+
   const loadChannels = useCallback(
     (opts?: { page?: number; platform?: string; search?: string }) => {
       fetchChannels(opts);
@@ -30,6 +34,26 @@ export function ExploreContent() {
 
   useEffect(() => {
     loadChannels();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/users/me/following/ids")
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok) return res.json().then((data: { streamerIds: string[] }) => data.streamerIds);
+        return [];
+      })
+      .then((ids) => {
+        if (cancelled) return;
+        setFollowingIds(ids ? new Set(ids) : new Set());
+      })
+      .catch(() => {
+        if (!cancelled) setFollowingIds(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -51,6 +75,50 @@ export function ExploreContent() {
       platform: filters.platform || undefined,
       search: filters.search || undefined,
     });
+  };
+
+  const handleFollow = async (channel: Channel) => {
+    setFollowLoading(channel.id);
+    try {
+      const res = await fetch("/api/follows", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ streamerId: channel.userId }),
+      });
+      if (res.status === 401) {
+        window.location.href = "/sign-in?callbackUrl=" + encodeURIComponent("/explore");
+        return;
+      }
+      if (!res.ok) throw new Error("Error al seguir");
+      setFollowingIds((prev) =>
+        prev === null ? new Set([channel.userId]) : new Set([...prev, channel.userId])
+      );
+    } finally {
+      setFollowLoading(null);
+    }
+  };
+
+  const handleUnfollow = async (channel: Channel) => {
+    setFollowLoading(channel.id);
+    try {
+      const res = await fetch(
+        "/api/follows?streamerId=" + encodeURIComponent(channel.userId),
+        { method: "DELETE" }
+      );
+      if (res.status === 401) {
+        window.location.href = "/sign-in?callbackUrl=" + encodeURIComponent("/explore");
+        return;
+      }
+      if (!res.ok) throw new Error("Error al dejar de seguir");
+      setFollowingIds((prev) => {
+        if (prev === null) return prev;
+        const next = new Set(prev);
+        next.delete(channel.userId);
+        return next;
+      });
+    } finally {
+      setFollowLoading(null);
+    }
   };
 
   return (
@@ -119,19 +187,46 @@ export function ExploreContent() {
       {!loading && channels.length > 0 && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {channels.map((channel) => (
-              <div
-                key={channel.id}
-                className="rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/30"
-              >
-                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-                  <TrophyIcon className="h-6 w-6 text-accent" aria-hidden />
+            {channels.map((channel) => {
+              const isFollowing = followingIds !== null && followingIds.has(channel.userId);
+              const isLoading = followLoading === channel.id;
+              return (
+                <div
+                  key={channel.id}
+                  className="flex flex-col rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/30"
+                >
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
+                    <TrophyIcon className="h-6 w-6 text-accent" aria-hidden />
+                  </div>
+                  <h2 className="font-semibold text-foreground">{channel.name}</h2>
+                  <p className="text-sm text-foreground-muted">{channel.platform}</p>
+                  <p className="mt-1 text-xs text-accent">{channel.trophies} trofeos</p>
+                  <div className="mt-4 flex-1">
+                    {isFollowing ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isLoading}
+                        onClick={() => handleUnfollow(channel)}
+                        className="w-full"
+                      >
+                        {isLoading ? "..." : "Dejar de seguir"}
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        disabled={isLoading}
+                        onClick={() => handleFollow(channel)}
+                        className="w-full"
+                      >
+                        {isLoading ? "..." : "Seguir"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <h2 className="font-semibold text-foreground">{channel.name}</h2>
-                <p className="text-sm text-foreground-muted">{channel.platform}</p>
-                <p className="mt-1 text-xs text-accent">{channel.trophies} trofeos</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {pagination && pagination.totalPages > 1 && (

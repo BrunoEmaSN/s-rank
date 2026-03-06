@@ -171,3 +171,19 @@ export const userTrophies = pgTable(
   },
   (t) => [unique("user_trophies_user_id_trophy_id_key").on(t.userId, t.trophyId)]
 );
+
+// Follows: user follows streamer (favorite_streamers)
+export const favoriteStreamers = pgTable(
+  "favorite_streamers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    streamerId: text("streamer_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => [unique("favorite_streamers_user_id_streamer_id_key").on(t.userId, t.streamerId)]
+);

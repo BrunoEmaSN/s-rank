@@ -1,4 +1,8 @@
+import Link from "next/link";
 import { getSession } from "@/lib/auth-server";
+import { db } from "@/lib/db";
+import { favoriteStreamers } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { TrophyIcon } from "@/components/icons";
 
 export default async function ProfilePage() {
@@ -11,6 +15,23 @@ export default async function ProfilePage() {
     needsRoleSelection?: boolean;
   } | undefined;
   const role = (user?.role as "streamer" | "sub") ?? "sub";
+  const userId = session?.user?.id;
+
+  const [followingCountRow, followersCountRow] = userId
+    ? await Promise.all([
+        db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(favoriteStreamers)
+          .where(eq(favoriteStreamers.userId, userId)),
+        db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(favoriteStreamers)
+          .where(eq(favoriteStreamers.streamerId, userId)),
+      ])
+    : [[{ count: 0 }], [{ count: 0 }]];
+
+  const followingCount = followingCountRow[0]?.count ?? 0;
+  const followersCount = followersCountRow[0]?.count ?? 0;
 
   return (
     <div>
@@ -33,6 +54,24 @@ export default async function ProfilePage() {
             </p>
           </div>
         </div>
+
+        <div className="mb-6 flex flex-wrap gap-4 border-t border-secondary/80 pt-4">
+          <Link
+            href="/following"
+            className="text-sm font-medium text-accent hover:underline"
+          >
+            Siguiendo ({followingCount})
+          </Link>
+          {role === "streamer" && (
+            <Link
+              href="/followers"
+              className="text-sm font-medium text-accent hover:underline"
+            >
+              Seguidores ({followersCount})
+            </Link>
+          )}
+        </div>
+
         {role === "streamer" ? (
           <div className="space-y-2 text-sm text-foreground-muted">
             <p>Conecta tu canal de Twitch o Kick desde Ajustes para crear trofeos y ver estadísticas.</p>
