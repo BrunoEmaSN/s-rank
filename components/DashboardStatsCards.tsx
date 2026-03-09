@@ -31,39 +31,39 @@ export function DashboardStatsCards({ role }: DashboardStatsCardsProps) {
 
   if (role === "streamer") {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Link
           href="/trophies"
-          className="block rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/50 hover:bg-secondary/70"
+          className="block min-w-0 rounded-xl border border-secondary/80 bg-secondary/50 p-4 transition hover:border-accent/50 hover:bg-secondary/70 sm:p-6"
         >
-          <TrophyIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
-          <h2 className="mb-1 font-semibold text-foreground">Trofeos creados</h2>
-          <p className="text-sm text-foreground-muted">
+          <TrophyIcon className="mb-2 h-8 w-8 text-accent sm:mb-3 sm:h-10 sm:w-10" aria-hidden />
+          <h2 className="mb-1 text-sm font-semibold text-foreground sm:text-base">Trofeos creados</h2>
+          <p className="text-xs text-foreground-muted sm:text-sm">
             Crea y gestiona trofeos para tu comunidad.
           </p>
-          <p className="mt-2 flex items-center justify-end gap-1 text-2xl font-bold text-accent">
-            Ver trofeos <IoArrowForward className="size-5" />
+          <p className="mt-2 flex flex-wrap items-center justify-end gap-1 text-lg font-bold text-accent sm:text-2xl">
+            Ver trofeos <IoArrowForward className="size-5 shrink-0" />
           </p>
         </Link>
-        <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-6">
-          <ChartIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
-          <h2 className="mb-1 font-semibold text-foreground">Estadísticas</h2>
-          <p className="text-sm text-foreground-muted">
+        <div className="min-w-0 rounded-xl border border-secondary/80 bg-secondary/50 p-4 sm:p-6">
+          <ChartIcon className="mb-2 h-8 w-8 text-accent sm:mb-3 sm:h-10 sm:w-10" aria-hidden />
+          <h2 className="mb-1 text-sm font-semibold text-foreground sm:text-base">Estadísticas</h2>
+          <p className="text-xs text-foreground-muted sm:text-sm">
             Desbloqueos y engagement de tus suscriptores.
           </p>
-          <p className="mt-2 text-2xl font-bold text-accent">—</p>
+          <p className="mt-2 text-lg font-bold text-accent sm:text-2xl">—</p>
         </div>
         <Link
           href="/followers"
-          className="block rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/50 hover:bg-secondary/70"
+          className="block min-w-0 rounded-xl border border-secondary/80 bg-secondary/50 p-4 transition hover:border-accent/50 hover:bg-secondary/70 sm:p-6"
         >
-          <PeopleIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
-          <h2 className="mb-1 font-semibold text-foreground">Seguidores</h2>
-          <p className="text-sm text-foreground-muted">
+          <PeopleIcon className="mb-2 h-8 w-8 text-accent sm:mb-3 sm:h-10 sm:w-10" aria-hidden />
+          <h2 className="mb-1 text-sm font-semibold text-foreground sm:text-base">Seguidores</h2>
+          <p className="text-xs text-foreground-muted sm:text-sm">
             Usuarios que te siguen.
           </p>
-          <p className="mt-2 flex items-center justify-end gap-1 text-2xl font-bold text-accent">
-            {followers} <IoArrowForward className="size-5" />
+          <p className="mt-2 flex flex-wrap items-center justify-end gap-1 text-lg font-bold text-accent sm:text-2xl">
+            {followers} <IoArrowForward className="size-5 shrink-0" />
           </p>
         </Link>
       </div>
@@ -71,35 +71,35 @@ export function DashboardStatsCards({ role }: DashboardStatsCardsProps) {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
       <Link
         href="/my-trophies"
-        className="block rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/50 hover:bg-secondary/70"
+        className="block min-w-0 rounded-xl border border-secondary/80 bg-secondary/50 p-4 transition hover:border-accent/50 hover:bg-secondary/70 sm:p-6"
       >
-        <TrophyIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
-        <h2 className="mb-1 font-semibold text-foreground">
+        <TrophyIcon className="mb-2 h-8 w-8 text-accent sm:mb-3 sm:h-10 sm:w-10" aria-hidden />
+        <h2 className="mb-1 text-sm font-semibold text-foreground sm:text-base">
           Trofeos desbloqueados
         </h2>
-        <p className="text-sm text-foreground-muted">
+        <p className="text-xs text-foreground-muted sm:text-sm">
           Tu progreso en los canales que sigues.
         </p>
-        <p className="mt-2 flex items-center justify-end gap-1 text-2xl font-bold text-accent">
-          {unlocked} <IoArrowForward className="size-5" />
+        <p className="mt-2 flex flex-wrap items-center justify-end gap-1 text-lg font-bold text-accent sm:text-2xl">
+          {unlocked} <IoArrowForward className="size-5 shrink-0" />
         </p>
       </Link>
       <Link
         href="/following"
-        className="block rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/50 hover:bg-secondary/70"
+        className="block min-w-0 rounded-xl border border-secondary/80 bg-secondary/50 p-4 transition hover:border-accent/50 hover:bg-secondary/70 sm:p-6"
       >
-        <PeopleIcon className="mb-3 h-10 w-10 text-accent" aria-hidden />
-        <h2 className="mb-1 font-semibold text-foreground">
+        <PeopleIcon className="mb-2 h-8 w-8 text-accent sm:mb-3 sm:h-10 sm:w-10" aria-hidden />
+        <h2 className="mb-1 text-sm font-semibold text-foreground sm:text-base">
           Canales seguidos
         </h2>
-        <p className="text-sm text-foreground-muted">
+        <p className="text-xs text-foreground-muted sm:text-sm">
           Explora canales y desbloquea trofeos.
         </p>
-        <p className="mt-2 flex items-center justify-end gap-1 text-2xl font-bold text-accent">
-          {following} <IoArrowForward className="size-5" />
+        <p className="mt-2 flex flex-wrap items-center justify-end gap-1 text-lg font-bold text-accent sm:text-2xl">
+          {following} <IoArrowForward className="size-5 shrink-0" />
         </p>
       </Link>
     </div>

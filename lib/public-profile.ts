@@ -1,12 +1,21 @@
 import { db } from "@/lib/db";
-import { profiles, userTrophies, trophies } from "@/db/schema";
+import { account, profiles, userTrophies, trophies } from "@/db/schema";
 import { eq, and, sql, inArray } from "drizzle-orm";
+
+export type LinkedPlatform = {
+  platform: "twitch" | "kick";
+  username?: string;
+  url: string;
+};
 
 export type PublicProfileData = {
   id: string;
   displayName: string | null;
   username: string | null;
   avatarUrl: string | null;
+  bio: string | null;
+  bannerUrl: string | null;
+  linkedPlatforms: LinkedPlatform[];
   trophyCountsByRarity: {
     common: number;
     rare: number;
@@ -29,6 +38,10 @@ export async function getPublicProfile(
       displayName: profiles.displayName,
       username: profiles.username,
       avatarUrl: profiles.avatarUrl,
+      bio: profiles.bio,
+      bannerUrl: profiles.bannerUrl,
+      twitchUsername: profiles.twitchUsername,
+      kickUsername: profiles.kickUsername,
     })
     .from(profiles)
     .where(eq(profiles.id, profileId))
@@ -89,11 +102,40 @@ export async function getPublicProfile(
     unlocked: r.count,
   }));
 
+  const linkedAccounts = await db
+    .select({ providerId: account.providerId })
+    .from(account)
+    .where(eq(account.userId, profileId));
+  const linkedProviderIds = new Set(
+    linkedAccounts.map((a) => a.providerId?.toLowerCase()).filter(Boolean)
+  );
+
+  const linkedPlatforms: PublicProfileData["linkedPlatforms"] = [];
+  if (linkedProviderIds.has("twitch")) {
+    const username = profile.twitchUsername?.trim();
+    linkedPlatforms.push({
+      platform: "twitch",
+      ...(username && { username }),
+      url: username ? `https://twitch.tv/${username}` : "https://twitch.tv",
+    });
+  }
+  if (linkedProviderIds.has("kick")) {
+    const username = profile.kickUsername?.trim();
+    linkedPlatforms.push({
+      platform: "kick",
+      ...(username && { username }),
+      url: username ? `https://kick.com/${username}` : "https://kick.com",
+    });
+  }
+
   return {
     id: profile.id,
     displayName: profile.displayName,
     username: profile.username,
     avatarUrl: profile.avatarUrl,
+    bio: profile.bio ?? null,
+    bannerUrl: profile.bannerUrl ?? null,
+    linkedPlatforms,
     trophyCountsByRarity: counts,
     trophiesByStreamer,
   };

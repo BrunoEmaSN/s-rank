@@ -9,12 +9,12 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen mx-auto max-w-6xl px-4 md:px-8 bg-primary text-foreground relative">
-      <Button variant="ghost" size="lg" className="mb-4 absolute top-4 left-4">
-        <Link href="/" className="flex items-center gap-2">
+      <Link href="/" className="mb-4 absolute top-4 left-4 w-fit">
+        <Button variant="ghost" size="lg" className="flex items-center gap-2">
           <IoArrowBack className="size-5" />
           <span className="text-sm">Volver</span>
-        </Link>
-      </Button>
+        </Button>
+      </Link>
       <main className="mx-auto flex min-h-[calc(100vh-72px)] max-w-md flex-col items-center justify-center py-10">
         {children}
       </main>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HiOutlineBell } from "react-icons/hi";
+import { HiOutlineBell, HiOutlineSearch } from "react-icons/hi";
 import { AccountDropdown } from "./AccountDropdown";
 import Image from "next/image";
 
@@ -28,7 +28,9 @@ export function Header({ session }: { session: SessionData }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between">
         <Link href="/" className="flex items-center gap-2 text-foreground no-underline">
           <Image src="/logo.svg" alt="S-Rank" className="translate-y-1" width={40} height={40} />
-          <span className="text-xl font-bold" style={{ fontFamily: "var(--font-quantico)" }}>RANK</span>
+          <span className="text-xl font-bold" style={{ fontFamily: "var(--font-quantico)" }}>
+            RANK
+          </span>
         </Link>
         <nav className="flex items-center gap-4">
           {user ? (
@@ -45,13 +47,8 @@ export function Header({ session }: { session: SessionData }) {
           ) : (
             <>
               <Link href="/explore" className={navLinkClass(pathname, "/explore", true)}>
-                Explorar
+                <HiOutlineSearch className="h-5 w-5" aria-hidden />
               </Link>
-              {pathname !== "/sign-in" && (
-                <Link href="/sign-in" className={navLinkClass(pathname, "/sign-in", true)}>
-                  Iniciar sesión
-                </Link>
-              )}
               {pathname !== "/sign-up" && (
                 <Link
                   href="/sign-up"

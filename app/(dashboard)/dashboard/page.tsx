@@ -17,20 +17,20 @@ export default async function DashboardPage() {
   const recommendedChannels = role === "sub" ? await getRecommendedChannels(8) : [];
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <h1
-        className="mb-2 text-2xl font-bold text-foreground"
+        className="mb-2 text-xl font-bold text-foreground sm:text-2xl"
         style={{ fontFamily: "var(--font-zen-kaku)" }}
       >
         Dashboard
       </h1>
-      <p className="mb-8 text-foreground-muted">
+      <p className="mb-6 text-sm text-foreground-muted sm:mb-8 sm:text-base">
         Hola, {user?.name ?? user?.email}. Estás como {role === "streamer" ? "streamer" : "suscriptor"}.
       </p>
 
       <DashboardStatsCards role={role} />
 
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         {role === "streamer" ? (
           <StreamerRecommendationsPanels />
         ) : (

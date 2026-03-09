@@ -11,6 +11,13 @@ import { CldUploadWidget, CldImage } from "next-cloudinary";
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "trophies";
 const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
 
+/** Restaura el scroll del body que el widget de Cloudinary desactiva al abrirse. */
+function restoreBodyScroll() {
+  if (typeof document === "undefined") return;
+  document.body.style.overflow = "";
+  document.body.style.removeProperty("overflow");
+}
+
 export interface TrophyImageUploadProps {
   value: string | null;
   onChange: (urlOrPublicId: string) => void;
@@ -52,9 +59,9 @@ export function TrophyImageUpload({
                 maxFiles: 1,
                 maxFileSize: MAX_FILE_SIZE_BYTES,
                 resourceType: "image",
-                cropping: true,
-                croppingAspectRatio: 1,
+                singleUploadAutoClose: false,
               }}
+              onClose={restoreBodyScroll}
               onSuccess={(result) => {
                 const info = result?.info as { secure_url?: string; public_id?: string } | undefined;
                 if (info?.public_id) {
@@ -92,9 +99,9 @@ export function TrophyImageUpload({
             maxFiles: 1,
             maxFileSize: MAX_FILE_SIZE_BYTES,
             resourceType: "image",
-            cropping: true,
-            croppingAspectRatio: 1,
+            singleUploadAutoClose: false,
           }}
+          onClose={restoreBodyScroll}
           onSuccess={(result) => {
             const info = result?.info as { secure_url?: string; public_id?: string } | undefined;
             if (info?.public_id) {

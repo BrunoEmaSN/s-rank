@@ -31,26 +31,26 @@ const recommendations = [
 
 export function StreamerRecommendationsPanels() {
   return (
-    <section className="rounded-xl border border-secondary/80 bg-secondary/50 p-6">
+    <section className="min-w-0 rounded-xl border border-secondary/80 bg-secondary/50 p-4 sm:p-6">
       <h2
-        className="mb-4 text-lg font-semibold text-foreground-muted"
+        className="mb-3 text-base font-semibold text-foreground-muted sm:mb-4 sm:text-lg"
         style={{ fontFamily: "var(--font-zen-kaku)" }}
       >
         Recomendaciones
       </h2>
-      <p className="mb-6 text-sm text-foreground-muted">
+      <p className="mb-4 text-xs text-foreground-muted sm:mb-6 sm:text-sm">
         Acciones que te ayudan a sacar más partido a tu canal.
       </p>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid min-w-0 gap-3 sm:gap-4 sm:grid-cols-2">
         {recommendations.map(({ href, icon: Icon, title, description }) => (
           <Link
             key={href}
             href={href}
-            className="block rounded-xl border border-secondary/80 bg-primary p-5 transition hover:border-accent/50 hover:bg-secondary/30"
+            className="block min-w-0 rounded-xl border border-secondary/80 bg-primary p-4 transition hover:border-accent/50 hover:bg-secondary/30 sm:p-5"
           >
-            <Icon className="mb-3 h-9 w-9 text-accent" aria-hidden />
-            <h3 className="mb-1 font-semibold text-foreground">{title}</h3>
-            <p className="text-sm text-foreground-muted">{description}</p>
+            <Icon className="mb-2 h-8 w-8 text-accent sm:mb-3 sm:h-9 sm:w-9" aria-hidden />
+            <h3 className="mb-1 text-sm font-semibold text-foreground sm:text-base">{title}</h3>
+            <p className="text-xs text-foreground-muted sm:text-sm wrap-break-word">{description}</p>
             <p className="mt-2 text-sm font-medium text-accent flex justify-center items-center gap-1">
               Ir <IoArrowForward className="size-5" />
             </p>

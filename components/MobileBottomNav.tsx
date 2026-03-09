@@ -15,7 +15,7 @@ type User = { name?: string; email?: string; role?: string; image?: string };
 
 function navLinkClass(pathname: string, href: string, exact?: boolean) {
   const base =
-    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground-muted transition hover:bg-secondary/80 hover:text-foreground";
+    "flex flex-col items-center justify-center gap-1 rounded-lg px-2 py-2.5 min-w-0 flex-1 text-xs text-foreground-muted transition hover:bg-secondary/80 hover:text-foreground";
   const isActive = exact
     ? pathname === href
     : pathname === href || pathname.startsWith(href + "/");
@@ -24,33 +24,33 @@ function navLinkClass(pathname: string, href: string, exact?: boolean) {
 }
 
 const subLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: HiOutlineViewGrid },
-  { href: "/community", label: "Community", icon: HiOutlineUserGroup },
-  { href: "/explore", label: "Explore", icon: HiOutlineSearch },
-  { href: "/following", label: "Following", icon: HiOutlineUserAdd },
-  { href: "/my-trophies", label: "My Trophies", icon: TrophyIcon },
+  { href: "/dashboard", icon: HiOutlineViewGrid },
+  { href: "/community", icon: HiOutlineUserGroup },
+  { href: "/explore", icon: HiOutlineSearch },
+  { href: "/following", icon: HiOutlineUserAdd },
+  { href: "/my-trophies", icon: TrophyIcon },
 ] as const;
 
 const streamerLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: HiOutlineViewGrid },
-  { href: "/community", label: "Community", icon: HiOutlineUserGroup },
-  { href: "/followers", label: "Followers", icon: HiOutlineUsers },
-  { href: "/following", label: "Following", icon: HiOutlineUserAdd },
-  { href: "/trophies", label: "Trophies", icon: TrophyIcon },
+  { href: "/dashboard", icon: HiOutlineViewGrid },
+  { href: "/community", icon: HiOutlineUserGroup },
+  { href: "/followers", icon: HiOutlineUsers },
+  { href: "/following", icon: HiOutlineUserAdd },
+  { href: "/trophies", icon: TrophyIcon },
 ] as const;
 
-export function Sidebar({ user }: { user: User }) {
+export function MobileBottomNav({ user }: { user: User }) {
   const pathname = usePathname();
   const role = (user?.role as "streamer" | "sub") ?? "sub";
   const links = role === "streamer" ? streamerLinks : subLinks;
 
   return (
-    <aside
-      className="w-full max-w-56 lg:max-w-1/6 hidden md:flex h-full shrink-0 py-6"
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden border-t border-border bg-slate-900 supports-backdrop-filter:bg-slate-950 safe-area-inset-bottom"
       aria-label="Navegación principal"
     >
-      <nav className="flex flex-col gap-0.5 px-3 w-full">
-        {links.map(({ href, label, icon: Icon }) => (
+      <div className="flex w-full items-center justify-around gap-0.5 px-2 py-2">
+        {links.map(({ href, icon: Icon }) => (
           <Link
             key={href}
             href={href}
@@ -61,10 +61,9 @@ export function Sidebar({ user }: { user: User }) {
             )}
           >
             <Icon className="h-5 w-5 shrink-0" aria-hidden />
-            {label}
           </Link>
         ))}
-      </nav>
-    </aside>
+      </div>
+    </nav>
   );
 }

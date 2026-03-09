@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth-server";
 import { getPublicProfile } from "@/lib/public-profile";
 import { TrophyIcon } from "@/components/icons";
+import { IoArrowBack } from "react-icons/io5";
 
 const TROPHY_RARITIES = [
   { key: "common" as const, label: "Normales", color: "text-gray-400" },
@@ -32,10 +33,11 @@ export default async function PublicProfilePage({
     profile.displayName ?? profile.username ?? "Usuario";
 
   return (
-    <div>
-      <p className="mb-2 text-sm text-foreground-muted">
+    <div className="w-full min-w-0">
+      <p className="mb-2 text-sm text-foreground-muted flex items-center gap-2">
         <Link href="/community" className="hover:text-accent">
-          ← Volver a comunidad
+          <IoArrowBack className="size-5" />
+          <span className="text-sm">Volver a comunidad</span>
         </Link>
       </p>
       <h1
@@ -44,6 +46,13 @@ export default async function PublicProfilePage({
       >
         Perfil
       </h1>
+      <div className="mb-6 overflow-hidden rounded-xl border border-secondary/80">
+        <img
+          src={profile.bannerUrl ?? "/banner-generic.png"}
+          alt=""
+          className="h-32 w-full object-cover sm:h-40 md:h-48"
+        />
+      </div>
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-6 lg:max-w-2xl">
           <div className="mb-6 flex items-center gap-4">
@@ -69,7 +78,29 @@ export default async function PublicProfilePage({
               )}
             </div>
           </div>
-
+          {profile.bio && (
+            <p className="mb-6 whitespace-pre-wrap text-sm text-foreground-muted">
+              {profile.bio}
+            </p>
+          )}
+          {profile.linkedPlatforms.length > 0 && (
+            <div className="mb-6 flex flex-wrap gap-3">
+              {profile.linkedPlatforms.map((link) => (
+                <a
+                  key={link.platform}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg border border-secondary/80 bg-secondary/30 px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary/50"
+                >
+                  <span className="capitalize">{link.platform}</span>
+                  {link.username != null && (
+                    <span className="text-foreground-muted">/{link.username}</span>
+                  )}
+                </a>
+              ))}
+            </div>
+          )}
           <div className="flex flex-row flex-wrap gap-6 md:gap-8">
             {TROPHY_RARITIES.map(({ key, label, color }) => (
               <div

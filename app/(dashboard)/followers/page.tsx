@@ -17,7 +17,7 @@ export default async function FollowersPage({
   const page = Math.max(1, parseInt(String(pageParam ?? "1"), 10) || 1);
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <h1
         className="mb-6 text-2xl font-bold text-foreground"
         style={{ fontFamily: "var(--font-zen-kaku)" }}

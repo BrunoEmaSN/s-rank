@@ -82,7 +82,7 @@ export default async function MyTrophiesPage() {
   const streamerGroups = Array.from(byStreamer.entries());
 
   return (
-    <div>
+    <div className="w-full min-w-0">
       <h1
         className="mb-2 text-2xl font-bold text-foreground"
         style={{ fontFamily: "var(--font-zen-kaku)" }}

@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import type { Channel } from "@/types/channel";
 import { Sidebar } from "@/components/Sidebar";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 
 type User = { name?: string; email?: string; role?: string; image?: string };
 
@@ -127,153 +128,162 @@ export function ExploreContent({ user }: { user: User }) {
 
   return (
     <div className="flex min-h-[calc(100vh-var(--header-height,0px))]">
-      {user && (
-        <Sidebar user={user} />
-      )}
-      <main className="mx-auto min-h-screen max-w-6xl px-4 py-10 md:px-8">
-        <h1
-          className="mb-2 text-2xl font-bold text-foreground"
-          style={{ fontFamily: "var(--font-zen-kaku)" }}
-        >
-          Explorar canales
-        </h1>
-        <p className="mb-8 text-foreground-muted">
-          Descubre streamers con sistema de trofeos. Conecta y desbloquea logros.
-        </p>
-
-        <form onSubmit={handleSearchSubmit} className="mb-8 flex flex-wrap items-end gap-4">
-          <div className="min-w-[200px] flex-1">
-            <Label htmlFor="search" className="mb-1 block text-sm text-foreground-muted">
-              Buscar por nombre
-            </Label>
-            <Input
-              id="search"
-              type="search"
-              placeholder="Nombre del canal..."
-              value={filters.search}
-              onChange={(e) => setFilters({ search: e.target.value })}
-              className="w-full"
-            />
-          </div>
-          <div className="w-full sm:w-[160px]">
-            <Label htmlFor="platform" className="mb-1 block text-sm text-foreground-muted">
-              Plataforma
-            </Label>
-            <Select
-              id="platform"
-              value={filters.platform}
-              onChange={(e) => handlePlatformChange(e.target.value)}
+      <main className="mx-auto min-w-0 max-w-6xl py-10">
+        <div className="flex">
+          {user && (
+            <Sidebar user={user} />
+          )}
+          <div className="flex flex-col w-full min-h-screen">
+            <h1
+              className="mb-2 text-2xl font-bold text-foreground"
+              style={{ fontFamily: "var(--font-zen-kaku)" }}
             >
-              <option value="">Todas</option>
-              <option value="Twitch">Twitch</option>
-              <option value="Kick">Kick</option>
-            </Select>
-          </div>
-          <Button type="submit" variant="outline">
-            Buscar
-          </Button>
-        </form>
+              Explorar canales
+            </h1>
+            <p className="mb-8 text-foreground-muted">
+              Descubre streamers con sistema de trofeos. Conecta y desbloquea logros.
+            </p>
 
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
-            {error}
-          </div>
-        )}
-
-        {loading && (
-          <div className="flex justify-center py-12">
-            <span className="text-foreground-muted">Cargando canales...</span>
-          </div>
-        )}
-
-        {!loading && channels.length === 0 && !error && (
-          <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-12 text-center text-foreground-muted">
-            No hay canales que coincidan con los filtros. Prueba otra búsqueda o plataforma.
-          </div>
-        )}
-
-        {!loading && channels.length > 0 && (
-          <>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {channels.map((channel) => {
-                const isFollowing = followingIds !== null && followingIds.has(channel.userId);
-                const isLoading = followLoading === channel.id;
-                return (
-                  <div
-                    key={channel.id}
-                    className="flex flex-col rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/30"
-                  >
-                    <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-                      <TrophyIcon className="h-6 w-6 text-accent" aria-hidden />
-                    </div>
-                    <h2 className="font-semibold text-foreground">{channel.name}</h2>
-                    <p className="text-sm text-foreground-muted">{channel.platform}</p>
-                    <p className="mt-1 text-xs text-accent">{channel.trophies} trofeos</p>
-                    {channel.communityId && (
-                      <Link
-                        href={`/community/${channel.communityId}`}
-                        className="mt-2 inline-block text-sm text-accent hover:underline"
-                      >
-                        Ver comunidad
-                      </Link>
-                    )}
-                    <div className="mt-4 flex-1">
-                      {isFollowing ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={isLoading}
-                          onClick={() => handleUnfollow(channel)}
-                          className="w-full"
-                        >
-                          {isLoading ? "..." : "Dejar de seguir"}
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="default"
-                          size="sm"
-                          disabled={isLoading}
-                          onClick={() => handleFollow(channel)}
-                          className="w-full"
-                        >
-                          {isLoading ? "..." : "Seguir"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {pagination && pagination.totalPages > 1 && (
-              <nav
-                className="mt-10 flex flex-wrap items-center justify-center gap-2"
-                aria-label="Paginación"
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(pagination.page - 1)}
-                  disabled={!pagination.hasPrev}
+            <form onSubmit={handleSearchSubmit} className="mb-8 flex flex-wrap items-end gap-4">
+              <div className="min-w-[200px] flex-1">
+                <Label htmlFor="search" className="mb-1 block text-sm text-foreground-muted">
+                  Buscar por nombre
+                </Label>
+                <Input
+                  id="search"
+                  type="search"
+                  placeholder="Nombre del canal..."
+                  value={filters.search}
+                  onChange={(e) => setFilters({ search: e.target.value })}
+                  className="w-full"
+                />
+              </div>
+              <div className="w-full sm:w-[160px]">
+                <Label htmlFor="platform" className="mb-1 block text-sm text-foreground-muted">
+                  Plataforma
+                </Label>
+                <Select
+                  id="platform"
+                  value={filters.platform}
+                  onChange={(e) => handlePlatformChange(e.target.value)}
                 >
-                  Anterior
-                </Button>
-                <span className="px-3 text-sm text-foreground-muted">
-                  Página {pagination.page} de {pagination.totalPages} ({pagination.total} canales)
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(pagination.page + 1)}
-                  disabled={!pagination.hasNext}
-                >
-                  Siguiente
-                </Button>
-              </nav>
+                  <option value="">Todas</option>
+                  <option value="Twitch">Twitch</option>
+                  <option value="Kick">Kick</option>
+                </Select>
+              </div>
+              <Button type="submit" variant="outline">
+                Buscar
+              </Button>
+            </form>
+
+            {error && (
+              <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+                {error}
+              </div>
             )}
-          </>
-        )}
 
+            {loading && (
+              <div className="flex justify-center py-12">
+                <span className="text-foreground-muted">Cargando canales...</span>
+              </div>
+            )}
+
+            {!loading && channels.length === 0 && !error && (
+              <div className="rounded-xl border border-secondary/80 bg-secondary/50 p-12 text-center text-foreground-muted">
+                No hay canales que coincidan con los filtros. Prueba otra búsqueda o plataforma.
+              </div>
+            )}
+
+            {!loading && channels.length > 0 && (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {channels.map((channel) => {
+                    const isFollowing = followingIds !== null && followingIds.has(channel.userId);
+                    const isLoading = followLoading === channel.id;
+                    return (
+                      <div
+                        key={channel.id}
+                        className="flex flex-col rounded-xl border border-secondary/80 bg-secondary/50 p-6 transition hover:border-accent/30"
+                      >
+                        <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
+                          <TrophyIcon className="h-6 w-6 text-accent" aria-hidden />
+                        </div>
+                        <h2 className="font-semibold text-foreground">{channel.name}</h2>
+                        <p className="text-sm text-foreground-muted">{channel.platform}</p>
+                        <p className="mt-1 text-xs text-accent">{channel.trophies} trofeos</p>
+                        {channel.communityId && (
+                          <Link
+                            href={`/community/${channel.communityId}`}
+                            className="mt-2 inline-block text-sm text-accent hover:underline"
+                          >
+                            Ver comunidad
+                          </Link>
+                        )}
+                        <div className="mt-4 flex-1">
+                          {isFollowing ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={isLoading}
+                              onClick={() => handleUnfollow(channel)}
+                              className="w-full"
+                            >
+                              {isLoading ? "..." : "Dejar de seguir"}
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              disabled={isLoading}
+                              onClick={() => handleFollow(channel)}
+                              className="w-full"
+                            >
+                              {isLoading ? "..." : "Seguir"}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {pagination && pagination.totalPages > 1 && (
+                  <nav
+                    className="mt-10 flex flex-wrap items-center justify-center gap-2"
+                    aria-label="Paginación"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => goToPage(pagination.page - 1)}
+                      disabled={!pagination.hasPrev}
+                    >
+                      Anterior
+                    </Button>
+                    <span className="px-3 text-sm text-foreground-muted">
+                      Página {pagination.page} de {pagination.totalPages} ({pagination.total} canales)
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => goToPage(pagination.page + 1)}
+                      disabled={!pagination.hasNext}
+                    >
+                      Siguiente
+                    </Button>
+                  </nav>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {
+          user && (
+            <MobileBottomNav user={user} />
+          )
+        }
         <Footer />
       </main>
     </div>

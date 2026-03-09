@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   description: "S-Rank is the ultimate platform designed for achievement hunters and content creators.",
 };
 
+type User = {
+  name?: string;
+  email?: string;
+  image?: string;
+  role?: string;
+  needsRoleSelection?: boolean;
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -19,8 +27,8 @@ export default async function RootLayout({
       lang="en"
     >
       <body className="antialiased" suppressHydrationWarning>
-        <div className="min-h-screen bg-primary text-foreground">
-          <Header session={session ? { user: session.user } : null} />
+        <div className="min-w-0 overflow-x-hidden bg-primary text-foreground">
+          <Header session={session ? { user: session.user as User } : null} />
           {children}
         </div>
       </body>
